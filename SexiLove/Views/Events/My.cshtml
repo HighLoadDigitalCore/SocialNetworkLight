@@ -1,0 +1,166 @@
+﻿@using SexiLove.Models
+@model SexiLove.Models.MyEvents
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    var db = new xDBDataContext();
+}
+@if (currentUser.ID > 0)
+{
+    <div id="FriendForm">
+        <div class="tabs tabs-ev">
+            <ul class="list-unstyled row">
+                <li class="column third"><a href="#tabs-1" arg="col1">Я иду</a></li>
+                <li class="column third"><a href="#tabs-2" arg="col2">Я ищу компанию</a></li>
+                <li class="column third"><a href="#tabs-3" arg="col3">Меня приглашают</a></li>
+            </ul>
+            <div id="tabs-1" style="display: none">
+                <h3>Список мероприятий <span class="color-blue">@Model.ImGoListCount</span></h3>
+                @using (Ajax.BeginForm("My", "Events", new { }, new AjaxOptions() { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "FriendForm", OnComplete = "initEventTab();" }, new { id = "FF0" }))
+                {
+                    <div class="input-search">
+                        <input type="text" name="Search" placeholder="Поиск мероприятий" value="@Model.Search">
+                        <button type="submit"><span class="icon icon-search"></span></button>
+                    </div>
+                    <input name="Order" value="0" id="Order1" type="hidden" />
+                    <a href="#" class="content-link @(Model.Order == 0 ? "active" : "")" onclick=" $('#Order1').val('0'); $('#FF0').submit(); ">Последние добавленные мной</a>
+                    <a href="#" class="content-link @(Model.Order == 1 ? "active" : "")" onclick=" $('#Order1').val('1'); $('#FF0').submit(); ">По дате: сначала ранние</a>
+                    <a href="#" class="content-link @(Model.Order == 2 ? "active" : "")" onclick=" $('#Order1').val('2'); $('#FF0').submit(); ">По дате: сначала поздние</a>
+
+                }
+                <ul class="list-unstyled user-list">
+                    @foreach (var ev in Model.ImGoList)
+                    {
+
+                        var invites = db.EventPeoples.Where(x => (x.FromUserID == currentUser.ID || x.ToUserID == currentUser.ID) && x.Status == 1 && x.Type == 1 && x.EventID == ev.EventID).ToList().Where(x => x.IsNotMe(currentUser)).ToList().GroupBy(x => x.GetUserID(currentUser)).Select(x => x.First()).ToList();
+                        <li class="user-list-item">
+                            <div class="user-list-item-img"><img src="@ev.Event.Photo?w=80&h=80&mode=crop"></div>
+                            <div class="user-list-item-content">
+                                <h4 class="user-list-item-content-name">
+                                    <a href="@Url.Action("View", "Events", new{ID= ev.EventID})">@ev.Event.Name</a>
+                                    <span class="ev-date">@ev.Event.StartDate.Value.ToString("d MMMM yyyy")</span>
+                                </h4>
+                                @if (invites.Any())
+                                {
+                                    <div class="user-list-item-content-city">
+                                        Вместе с:
+                                        @foreach (var invite in invites)
+                                        {
+                                            <a class="inv-ev" href="@Url.Action("Index", "Cabinet", new {ID = invite.GetUserID(currentUser)})">@invite.GetName(currentUser)</a>
+                                            if (invite.FromUserID == currentUser.ID)
+                                            {
+                                                <a class="inv-ev-del" href="@Url.Action("DeleteInvite", "Events", new { ID = invite.ID })">X</a>
+                                            }
+                                        }
+                                    </div>
+                                }
+                                <div style="margin-top: 7px; width: 300px; float: left">
+                                    <a href="@Url.Action("Remove", "Events", new {ID = ev.ID})" class=" btn btn-blue btn-upper btn-xsmall btn-go">Уже не иду</a>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div id="tabs-2" style="display: none">
+                <h3>
+                    Я ищу компанию <span class="color-blue">@Model.IneedCompanyCount</span>
+                </h3>
+                @using (Ajax.BeginForm("My", "Events", new { }, new AjaxOptions() { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "FriendForm", OnComplete = "initEventTab();" }, new { id = "FF1" }))
+                {
+                    <div class="input-search">
+                        <input type="text" name="Search" placeholder="Поиск мероприятий" value="@Model.Search">
+                        <button type="submit"><span class="icon icon-search"></span></button>
+                    </div>
+                    <input name="Order" value="0" id="Order2" type="hidden" />
+                    <a href="#" class="content-link @(Model.Order == 0 ? "active" : "")" onclick=" $('#Order2').val('0'); $('#FF1').submit(); ">Послдение добавленные мной</a>
+                    <a href="#" class="content-link @(Model.Order == 1 ? "active" : "")" onclick=" $('#Order2').val('1'); $('#FF1').submit(); ">По дате: сначала ранние</a>
+                    <a href="#" class="content-link @(Model.Order == 2 ? "active" : "")" onclick=" $('#Order2').val('2'); $('#FF1').submit(); ">По дате: сначала поздние</a>
+
+                }
+                <ul class="list-unstyled user-list">
+                    @foreach (var ev in Model.IneedCompanyList)
+                    {
+
+                        var invites = db.EventPeoples.Where(x => x.Status == 1 && x.Type == 0 && x.EventID == ev.EventID).ToList().Where(x => x.IsNotMe(currentUser)).ToList().GroupBy(x => x.GetUserID(currentUser)).Select(x => x.First()).Count();
+                        <li class="user-list-item">
+                            <div class="user-list-item-img"><img src="@ev.Event.Photo?w=80&h=80&mode=crop"></div>
+                            <div class="user-list-item-content">
+                                <h4 class="user-list-item-content-name">
+                                    <a href="@Url.Action("View", "Events", new{ID= ev.EventID})">@ev.Event.Name</a>
+                                    <span class="ev-date">@ev.Event.StartDate.Value.ToString("d MMMM yyyy")</span>
+                                </h4>
+
+
+                                @if (invites > 0)
+                                {
+                                    <div class="user-list-item-content-city">
+                                        С вами хотят пойти: <a href="@Url.Action("View", "Events", new{ID = ev.EventID})">@invites человек@(invites % 10 <= 1 || invites % 10 > 5 ? "" : "а")</a>
+                                        @*
+                                            @foreach (var invite in invites)
+                                            {
+                                                <a class="inv-ev" href="@Url.Action("Index", "Cabinet", new {ID = invite.GetUserID(currentUser)})">@invite.GetName(currentUser)</a>
+                                                if (invite.FromUserID == currentUser.ID)
+                                                {
+                                                    <a class="inv-ev-del" href="@Url.Action("DeleteInvite", "Events", new { ID = invite.ID })">X</a>
+                                                }
+                                            }
+                                        *@
+                                    </div>
+                                }
+                                <div style="margin-top: 7px; width: 300px; float: left">
+                                    <a href="@Url.Action("Remove", "Events", new{ID = ev.ID})" class=" btn btn-blue btn-upper btn-xsmall btn-go">Уже не ищу</a>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div id="tabs-3" style="display: none">
+                <h3>Меня приглашают</h3>
+                @using (Ajax.BeginForm("My", "Events", new { }, new AjaxOptions() { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "FriendForm", OnComplete = "initEventTab();" }, new { id = "FF2" }))
+                {
+                    <div class="input-search">
+                        <input type="text" name="Search" placeholder="Поиск мероприятий" value="@Model.Search">
+                        <button type="submit"><span class="icon icon-search"></span></button>
+                    </div>
+                    <input name="Order" value="0" id="Order3" type="hidden" />
+                    <a href="#" class="content-link @(Model.Order == 0 ? "active" : "")" onclick=" $('#Order3').val('0'); $('#FF2').submit(); ">Все</a>
+                    <a href="#" class="content-link @(Model.Order == 1 ? "active" : "")" onclick=" $('#Order3').val('1'); $('#FF2').submit(); ">Только принятые</a>
+                    <a href="#" class="content-link @(Model.Order == 2 ? "active" : "")" onclick=" $('#Order3').val('2'); $('#FF2').submit(); ">Только отклоненные</a>
+                    <a href="#" class="content-link @(Model.Order == 3 ? "active" : "")" onclick=" $('#Order3').val('3'); $('#FF2').submit(); ">Только без действия</a>
+                }
+                <ul class="list-unstyled user-list">
+                    @foreach (var ev in Model.InviteList)
+                    {
+                        <li class="user-list-item">
+                            <div style="width: 100%; margin-bottom: 3px">Приглашение от <a href="@Url.Action("Index", "Cabinet", new{ID=ev.GetUserID(currentUser)})">@ev.GetName(currentUser)</a> на:</div>
+                            <div class="user-list-item-img"><img src="@ev.Event.Photo?w=80&h=80&mode=crop"></div>
+                            <div class="user-list-item-content">
+                                <h4 class="user-list-item-content-name">
+                                    <a href="@Url.Action("View", "Events", new{ID= ev.EventID})">@ev.Event.Name</a>
+                                    <span class="ev-date">@ev.Event.StartDate.Value.ToString("d MMMM yyyy")</span>
+                                </h4>
+                                <div style="float: right; width: 100%; text-align: right">Отправил(а) @ev.SendDate.ToString("d MMMMM в HH:mm")</div>
+                                @if (ev.Status == 0)
+                                {
+                                    <div style="margin-top: 7px; width: 300px; float: left">
+                                        <a href="@Url.Action("Status", "Events", new{ID = ev.ID, Status = 1})" class=" btn btn-green btn-upper btn-xsmall btn-go">Принять</a>
+                                        <a style="margin-left: 20px;" href="@Url.Action("Status", "Events", new{ID = ev.ID, Status = -1})" class=" btn btn-blue btn-upper btn-xsmall btn-go">Отклонить</a>
+                                    </div>
+                                }
+                                <div class="user-list-item-info" style="float: right">
+
+                                    <div class="status status-@(ev.Status == -1 ? "no" : (ev.Status == 0 ? "waiting" : "yes"))"><span class="icon icon-status icon-status-@(ev.Status == -1 ? "no" : (ev.Status == 0 ? "waiting" : "yes"))"></span>Заявка @(ev.Status == -1 ? "отклонена" : (ev.Status == 0 ? "в ожидании" : "принята"))</div>
+                                </div>
+                            </div>
+
+
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+}

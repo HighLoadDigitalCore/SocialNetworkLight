@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="SexiLove" Class="xDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=ANTON-PC\SQLSERVER2012;Initial Catalog=SexiLove;Persist Security Info=True;User ID=sa" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="SexiLoveConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Towns" Member="Towns">
+    <Type Name="Town">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Lat" Type="System.Decimal" DbType="Decimal(18,14)" CanBeNull="true" />
+      <Column Name="Lng" Type="System.Decimal" DbType="Decimal(18,14)" CanBeNull="true" />
+      <Association Name="Town_Place" Member="Places" ThisKey="ID" OtherKey="TownID" Type="Place" />
+      <Association Name="Town_User" Member="Users" ThisKey="ID" OtherKey="TownID" Type="User" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserPhotos" Member="UserPhotos">
+    <Type Name="UserPhoto">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Path" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="User_UserPhoto" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserLocks" Member="UserLocks">
+    <Type Name="UserLock">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TargetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="User_UserLock" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Messages" Member="Messages">
+    <Type Name="Message">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ToUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FromUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsRead" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="User_Message" Member="User" ThisKey="ToUserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="User_Message1" Member="User1" ThisKey="FromUserID" OtherKey="ID" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Friends" Member="Friends">
+    <Type Name="Friend">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ToUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FromUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IsRead" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="User_Friend" Member="FromUser" ThisKey="FromUserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="User_Friend1" Member="ToUser" ThisKey="ToUserID" OtherKey="ID" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Datings" Member="Datings">
+    <Type Name="Dating">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FromUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ToUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IsRead" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="User_Dating" Member="FromUser" ThisKey="FromUserID" OtherKey="ID" Type="User" IsForeignKey="true" />
+      <Association Name="User_Dating1" Member="ToUser" ThisKey="ToUserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlaceRatings" Member="PlaceRatings">
+    <Type Name="PlaceRating">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Rating" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="PlaceID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Place_PlaceRating" Member="Place" ThisKey="PlaceID" OtherKey="ID" Type="Place" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="User_PlaceRating" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlaceImages" Member="PlaceImages">
+    <Type Name="PlaceImage">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Path" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="PlaceID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Place_PlaceImage" Member="Place" ThisKey="PlaceID" OtherKey="ID" Type="Place" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Places" Member="Places">
+    <Type Name="Place">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="TownID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Adress" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Metro" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="MinPay" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaxPay" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Logo" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(2000)" CanBeNull="true" />
+      <Association Name="Place_PlaceRating" Member="PlaceRatings" ThisKey="ID" OtherKey="PlaceID" Type="PlaceRating" />
+      <Association Name="Place_PlaceImage" Member="PlaceImages" ThisKey="ID" OtherKey="PlaceID" Type="PlaceImage" />
+      <Association Name="Place_Meeting" Member="Meetings" ThisKey="ID" OtherKey="PlaceID" Type="Meeting" />
+      <Association Name="Town_Place" Member="Town" ThisKey="TownID" OtherKey="ID" Type="Town" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Meeting" Member="Meetings">
+    <Type Name="Meeting">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Cost" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Date" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Time" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="PlaceID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="TargetSex" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="MinAge" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaxAge" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HasAccess" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Author" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Meeting_MeetingPeople" Member="MeetingPeoples" ThisKey="ID" OtherKey="MeetingID" Type="MeetingPeople" />
+      <Association Name="Place_Meeting" Member="Place" ThisKey="PlaceID" OtherKey="ID" Type="Place" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="User_Meeting" Member="User" ThisKey="Author" OtherKey="ID" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MeetingPeople" Member="MeetingPeoples">
+    <Type Name="MeetingPeople">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MeetingID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SendDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="Meeting_MeetingPeople" Member="Meeting" ThisKey="MeetingID" OtherKey="ID" Type="Meeting" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="User_MeetingPeople" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TextPages" Member="TextPages">
+    <Type Name="TextPage">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="URL" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Users" Member="Users">
+    <Type Name="User">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="TownID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BirthDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Sex" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="UserSurname" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="UserPatrinomic" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Orientation" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Purpose" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="SearchFor" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Relations" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="HasChildren" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Sponsor" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Height" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Weight" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Body" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Appearence" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Eyes" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Hears" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Education" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Spec" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Job" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="WorkType" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Earn" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="MonthSalary" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="HasCar" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="LivingConditions" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="LivingTown" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Smoking" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Drinking" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Drugs" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="LifePriority" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Music" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Sport" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Hobby" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Books" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Films" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="GoodKinds" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="BadKinds" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="MainPurpose" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="SexRole" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="SexPeriod" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="SexRelation" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="SexRelationDetail" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="AboutMe" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="LastVisitDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsVip" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="VipEnd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="User_UserPhoto" Member="UserPhotos" ThisKey="ID" OtherKey="UserID" Type="UserPhoto" />
+      <Association Name="User_UserLock" Member="UserLocks" ThisKey="ID" OtherKey="UserID" Type="UserLock" />
+      <Association Name="User_Message" Member="Messages" ThisKey="ID" OtherKey="ToUserID" Type="Message" />
+      <Association Name="User_Message1" Member="Messages1" ThisKey="ID" OtherKey="FromUserID" Type="Message" />
+      <Association Name="User_Friend" Member="FriendsFromUser" ThisKey="ID" OtherKey="FromUserID" Type="Friend" />
+      <Association Name="User_Friend1" Member="FriendsToUser" ThisKey="ID" OtherKey="ToUserID" Type="Friend" />
+      <Association Name="User_Dating" Member="DatingsFromUser" ThisKey="ID" OtherKey="FromUserID" Type="Dating" />
+      <Association Name="User_Dating1" Member="DatingsToUser" ThisKey="ID" OtherKey="ToUserID" Type="Dating" />
+      <Association Name="User_PlaceRating" Member="PlaceRatings" ThisKey="ID" OtherKey="UserID" Type="PlaceRating" />
+      <Association Name="User_Meeting" Member="Meetings" ThisKey="ID" OtherKey="Author" Type="Meeting" />
+      <Association Name="User_MeetingPeople" Member="MeetingPeoples" ThisKey="ID" OtherKey="UserID" Type="MeetingPeople" />
+      <Association Name="User_webpages_Membership" Member="webpages_Membership" ThisKey="ID" OtherKey="UserId" Type="webpages_Membership" Cardinality="One" />
+      <Association Name="User_webpages_UsersInRole" Member="webpages_UsersInRoles" ThisKey="ID" OtherKey="UserId" Type="webpages_UsersInRole" />
+      <Association Name="User_BlockedUser" Member="BlockedUsers" ThisKey="ID" OtherKey="UserID" Type="BlockedUser" />
+      <Association Name="User_MoneyTransaction" Member="MoneyTransactions" ThisKey="ID" OtherKey="UserID" Type="MoneyTransaction" />
+      <Association Name="User_UserSetting" Member="UserSetting" ThisKey="ID" OtherKey="UserID" Type="UserSetting" Cardinality="One" />
+      <Association Name="Town_User" Member="Town" ThisKey="TownID" OtherKey="ID" Type="Town" IsForeignKey="true" DeleteRule="SET NULL" />
+    </Type>
+  </Table>
+  <Table Name="dbo.webpages_Membership" Member="webpages_Memberships">
+    <Type Name="webpages_Membership">
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ConfirmationToken" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
+      <Column Name="IsConfirmed" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="LastPasswordFailureDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PasswordFailuresSinceLastSuccess" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordChangedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PasswordSalt" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordVerificationToken" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
+      <Column Name="PasswordVerificationTokenExpirationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="User_webpages_Membership" Member="User" ThisKey="UserId" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.webpages_Roles" Member="webpages_Roles">
+    <Type Name="webpages_Role">
+      <Column Name="RoleId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RoleName" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Association Name="webpages_Role_webpages_UsersInRole" Member="webpages_UsersInRoles" ThisKey="RoleId" OtherKey="RoleId" Type="webpages_UsersInRole" />
+    </Type>
+  </Table>
+  <Table Name="dbo.webpages_UsersInRoles" Member="webpages_UsersInRoles">
+    <Type Name="webpages_UsersInRole">
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RoleId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="webpages_Role_webpages_UsersInRole" Member="webpages_Role" ThisKey="RoleId" OtherKey="RoleId" Type="webpages_Role" IsForeignKey="true" />
+      <Association Name="User_webpages_UsersInRole" Member="User" ThisKey="UserId" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BlockedUsers" Member="BlockedUsers">
+    <Type Name="BlockedUser">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StartIP" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="EndIP" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="BlockTill" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="BlockType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="User_BlockedUser" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MoneyTransactions" Member="MoneyTransactions">
+    <Type Name="MoneyTransaction">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Sum" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="User_MoneyTransaction" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserSettings" Member="UserSettings">
+    <Type Name="UserSetting">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SendLetters" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="InviteForMeeting" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OfferFriendship" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ViewMeetings" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ViewFriends" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ViewPhotos" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="User_UserSetting" Member="User" ThisKey="UserID" OtherKey="ID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+</Database>

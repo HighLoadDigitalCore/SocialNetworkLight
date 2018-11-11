@@ -1,0 +1,73 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    var a = ViewContext.ParentActionViewContext.RouteData.Values["action"].ToString();
+    var c = ViewContext.ParentActionViewContext.RouteData.Values["controller"].ToString();
+    var db = new xDBDataContext();
+    var newMessages = db.Messages.Count(x => !x.IsRead && x.ToUserID == currentUser.ID);
+    var newFriends = db.Friends.Count(x => x.Status == 0 && x.ToUserID == currentUser.ID && !x.IsRead);
+    var newDatings = db.Datings.Count(x => x.Status == 0 && x.ToUserID == currentUser.ID && !x.IsRead);
+    var newMeetings = db.MeetingPeoples.Count(x => x.Status == 0 && x.UserID == currentUser.ID);
+    var newEvents = db.EventPeoples.Count(x => x.Status == 0 && x.ToUserID == currentUser.ID);
+    var admin = currentUser.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Admin");
+    var moder = currentUser.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Moderator");
+    var hasPlaces = currentUser.PlaceAdmins.Any(x => x.Place.Approved);
+}
+@if (currentUser.ID > 0)
+{
+    <nav class="sidebar-nav">
+        <ul class="list-unstyled sidebar-nav-list">
+
+            @if (!admin)
+            {
+                <li class="sidebar-nav-item @(a == "Index" && c == "Cabinet" ? "active" : "")"><a href="@Url.Action("Index", "Cabinet")">Моя страница</a></li>
+                <li class="sidebar-nav-item @(a == "Messages" && c == "Cabinet" ? "active" : "")"><a href="@Url.Action("Messages", "Cabinet")">Мои сообщения@(newMessages > 0 ? string.Format(" ({0})", newMessages) : "")</a></li>
+                <li class="sidebar-nav-item @(a == "FriendsIndex" && c == "Cabinet" ? "active" : "")"><a href="@Url.Action("FriendsIndex")">Мои друзья@(newFriends > 0 ? string.Format(" ({0})", newFriends) : "")</a></li>
+                <li class="sidebar-nav-item @(a == "Datings" && c == "Cabinet" ? "active" : "")"><a href="@Url.Action("Datings")">Мои знакомства@(newDatings > 0 ? string.Format(" ({0})", newDatings) : "")</a></li>
+                <li class="sidebar-nav-item @(a == "My" && c == "Meeting" ? "active" : "")"><a href="@Url.Action("My", "Meeting")">Мои встречи@(newMeetings > 0 ? string.Format(" ({0})", newMeetings) : "")</a></li>
+                <li class="sidebar-nav-item @(a == "MyIndex" && c == "Events" ? "active" : "")"><a href="@Url.Action("MyIndex", "Events")">Мои мероприятия@(newEvents > 0 ? string.Format(" ({0})", newEvents) : "")</a></li>
+                <li class="sidebar-nav-item @(a == "BlackList" && c == "Cabinet" ? "active" : "")"><a href="@Url.Action("BlackList", "Cabinet")">Мой черный список</a></li>
+            }
+            else
+            {
+                <li class="sidebar-nav-item @((a == "Towns" || a == "EditTown") && c == "Admin" ? "active" : "")"><a href="@Url.Action("Towns", "Admin")">Города</a></li>
+                <li class="sidebar-nav-item @((a == "Users" || a == "EditUser") && c == "Admin" ? "active" : "")"><a href="@Url.Action("Users", "Admin")">Пользователи</a></li>
+                <li class="sidebar-nav-item @((a == "TextPages" || a == "EditTextPage") && c == "Admin" ? "active" : "")"><a href="@Url.Action("TextPages", "Admin")">Текстовые страницы</a></li>
+                <li class="sidebar-nav-item @((a == "Qsts" || a == "EditQsts") && c == "Admin" ? "active" : "")"><a href="@Url.Action("Qsts", "Admin")">Вопросы</a></li>
+                <li class="sidebar-nav-item @((a == "Places" || a == "EditPlace") && c == "Admin" ? "active" : "")"><a href="@Url.Action("Places", "Admin")">Каталог мест</a></li>
+                <li class="sidebar-nav-item @((a == "Event") && c == "Admin" ? "active" : "")"><a href="@Url.Action("Event", "Admin")">Мероприятия</a></li>
+            }
+            @if (moder && hasPlaces && !admin)
+            {
+                <li class="sidebar-nav-item @((a == "PlacesModer" || a == "EditPlaceModer") && c == "Admin" ? "active" : "")"><a href="@Url.Action("PlacesModer", "Admin")">Мои места</a></li>
+            }
+            <li class="sidebar-nav-item"><a href="@Url.Action("Exit", "Admin")">Выход</a></li>
+        </ul>
+    </nav>
+    if ( /*!currentUser.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Moderator") && */currentUser.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Client"))
+    {
+
+        <a href="@Url.Action("Buy", "Cabinet")#vip" class="btn btn-red btn-icon btn-small"><span class="icon icon-diamond"></span>@(currentUser.IsVip ? "Продлить" : "Купить") VIP-аккаунт</a>
+        if (currentUser.IsVip)
+        {
+            <div class="vip-status">
+                До окончания действия<br>
+                VIP-аккаунта осталось:<span class="vip-status-value">@(Math.Ceiling(Math.Abs((currentUser.VipEnd ?? DateTime.Now).Date.Subtract(DateTime.Now).TotalDays))) @(((int) Math.Ceiling(Math.Abs((currentUser.VipEnd ?? DateTime.Now).Date.Subtract(DateTime.Now).TotalDays))).GetStringPostfix(WordKind.Day))</span>
+            </div>
+        }
+        <a href="@Url.Action("Buy", "Cabinet")#up" class="btn btn-orange btn-icon btn-small"><span class="icon icon-user"></span>Поднять мою анкету</a>
+        if (currentUser.IsUp)
+        {
+            <div class="vip-status">
+                До окончания действия<br>
+                осталось:<span class="vip-status-value">@(Math.Ceiling((currentUser.UpEnd ?? DateTime.Now).Date.Subtract(DateTime.Now).TotalDays)) дней</span>
+            </div>
+        }
+
+    }
+}
+else
+{
+    @Html.Action("LeftAuth", "Profile")
+}

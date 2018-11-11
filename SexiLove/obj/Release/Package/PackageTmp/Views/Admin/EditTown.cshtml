@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "CityLove - Редактирование города";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@model SexiLove.Models.Town
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            
+        </li>
+    </ol>
+</header>
+@using (Html.BeginForm("EditTown", "Admin", FormMethod.Post, new { @class = "row" }))
+{
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <div class="content-column-1">
+        <h3>Название города</h3>
+        <input type="text" value="@Model.Name" name="Name" class="@(Model.IsPost && Model.Name.IsNullOrEmpty() ? "err":"")">
+        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+    </div>
+}
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

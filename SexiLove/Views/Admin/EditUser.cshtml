@@ -1,0 +1,59 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Редактирование пользователя";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model SexiLove.Models.BlockedUser
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            
+        </li>
+    </ol>
+</header>
+
+
+
+@using (Html.BeginForm("EditUser", "Admin", FormMethod.Post, new { @class = "row" }))
+{
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <input type="hidden" name="UserID" value="@Model.UserID" />
+    <div class="content-column-1">
+        <h3>ФИО</h3>
+        <span>
+            @Model.User.NameAndSurname
+        </span>
+        <h3>Логин</h3>
+        <span>
+            @Model.User.Name
+        </span>
+        <h3>E-mail</h3>
+        <span>
+            @Model.User.Email
+        </span>
+        <h3>Способ блокировки</h3>
+        @Html.DropDownList("BlockType", new[] { new SelectListItem() { Selected = Model.BlockType == -1, Text = "Не блокировать", Value = "-1" }, new SelectListItem() { Selected = Model.BlockType == 0, Text = "Блокировать до указаной даты", Value = "0" }, new SelectListItem() { Selected = Model.BlockType == 1, Text = "Блокировать до указанной даты по IP", Value = "1" } }, new { @class = "form-control" })
+
+        <h3>Блокировать пользователя до</h3>
+        @Html.TextBox("BlockTill", Model.BlockTill, new { @class = "form-control datepicker", arg="date" })
+        <h3>Начальный IP для блокировки</h3>
+        @Html.TextBox("StartIPStr", Model.StartIPStr, new { @class = "form-control" })
+        <h3>Конечный IP для блокировки</h3>
+        @Html.TextBox("EndIPStr", Model.EndIPStr, new { @class = "form-control" })
+
+        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+    </div>
+}
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

@@ -1,0 +1,128 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Vip - опции";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+
+}
+@using System.Linq
+@using System.Web.UI.WebControls
+@using SexiLove.Models
+@model SexiLove.Models.User
+
+<div class="row">
+    <header class="content-header row">
+        <ol class="list-unstyled breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Личный кабинет</a></li>
+            <li class="breadcrumb-item"><a href="#">VIP - опции</a></li>
+        </ol>
+        @Html.Action("Account", "Cabinet")
+    </header>
+</div>
+<div class="tabs">
+    <ul class="list-unstyled row">
+        @if (Model.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Client"))
+        {
+            <li class="column half">
+                <a href="#tabs-1">
+                    <div>Для пользователей</div>
+                </a>
+            </li>
+        }
+        @if (Model.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Moderator"))
+        {
+            <li class="column half">
+                <a href="#tabs-2">
+                    <div>Для заведений</div>
+                </a>
+            </li>
+        }
+    </ul>
+    @if (Model.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Client"))
+    {
+        <div id="tabs-1">
+            <div class="content-form content-form-2 row">
+                <div class="content-form-left">
+                    <form>
+                        <h2>Вы можете:</h2>
+                        <div class="order">
+                            <div class="order-checks">
+                                <div data-info="Поднять анкету в поиске, длительность - 30 дней, стоимость - 100 рублей" class="order-checks-item">
+                                    <input type="radio" name="payment" value="up" cost="100"  duration="30:00:00" id="upBox">
+                                    <label for="upBox">Поднять анкету</label>
+                                </div>
+                                <div data-info="Купить VIP-аккаунт, длительность - 30 дней, стоимость - 300 рублей" class="order-checks-item">
+                                    <input type="radio" name="payment" id="vipBox" value="vip" cost="300" duration="30:00:00">
+                                    <label for="vipBox">Купить VIP-аккаунт</label>
+                                </div>
+                                <div data-info="Оплатить режим невидимки, длительность 30 дней, стоимость - 300 рублей" class="order-checks-item">
+                                    <input type="radio" name="payment" id="hiddenBox" cost="100" value="hidden" duration="30:00:00">
+                                    <label for="hiddenBox">Режим невидимки</label>
+                                </div>
+                            </div>
+                            <div class="order-info">
+                                <div class="order-info-title">Выберите опцию:</div>
+                                <div class="order-info-content"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right" arg="@Model.Balance" onclick=" return pay(this); ">Оплатить</button>
+                    </form>
+                </div>
+                <div class="content-form-right">
+                    <h3>У вас на счету:</h3>
+                    <div class="credit"><strong>@Model.Balance.ToString("f0")<br></strong>рублей</div><a href="@Url.Action("Refill")" class="content-link">Пополнить счет</a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Moderator" && Model.PlaceAdmins.Any(z => z.Place.Approved)))
+    {
+        <div id="tabs-2">
+            <div class="content-form content-form-2 row">
+                <div class="content-form-left">
+                    <form>
+                        <h2>Вы можете:</h2>
+                        <div class="order">
+                            <div class="order-checks">
+                                <div data-info="Попасть в ленту лучших заведений, длительность - 30 дней, стоимость - 100 рублей" class="order-checks-item">
+                                    <input type="radio" name="payment" value="place" cost="100" duration="30:00:00" id="upBox">
+                                    <label for="upBox">Попасть в ленту</label>
+                                </div>
+                            </div>
+                            <div class="order-info">
+                                <div class="order-info-title">Выберите опцию:</div>
+                                <div class="order-info-content"></div>
+                                <br />
+                                
+                                @{
+        var places = Model.PlaceAdmins.Where(z => z.Place.Approved).ToList();
+        var count = 0;
+        foreach (var place in places)
+        {
+            <input type="radio"  @(count == 0 ? "checked=checked" : "") arg="@place.Place.ID" name="placelist" /><label>@place.Place.Name</label>
+                                    <br />
+                                    <br />
+            count++;
+        }
+                                }
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right" arg="@Model.Balance" onclick=" return pay(this); ">Оплатить</button>
+                    </form>
+                </div>
+                <div class="content-form-right">
+                    <h3>У вас на счету:</h3>
+                    <div class="credit"><strong>@Model.Balance.ToString("f0")<br></strong>рублей</div><a href="@Url.Action("Refill")" class="content-link">Пополнить счет</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section sidebar
+{
+    @Html.Action("LeftMenu")
+}

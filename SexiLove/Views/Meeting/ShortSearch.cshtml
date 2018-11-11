@@ -1,0 +1,93 @@
+﻿@using SexiLove.Extensions
+@model SexiLove.Models.MeetingShortSearch
+<script type="text/javascript">
+    $().ready(function () {
+        if ($('#STID').val()) {
+            $('.city-selected .jq-selectbox__select-text').text($('.city-selected select option[value="' + $('#STID').val() + '"]').text());
+
+        }
+    });
+</script>
+<div id="DateingList">
+    <div class="search row">
+        @using (Ajax.BeginForm("ShortSearch", "Meeting", new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "DateingList", OnComplete = "initUIAgain($('#DateingList'));" }))
+        {
+            <input type="hidden" name="TownID" id="STID" value="@Model.TownID" />
+            <div class="row">
+                <div class="search-block search-block-1">
+                    <label for="search-object">Я ищу</label>
+                    <select id="search-object" name="Sex">
+                        <option value="True" @(Model.Sex ? "selected" : "")>Парня</option>
+                        <option value="False" @(!Model.Sex ? "selected" : "")>Девушку</option>
+                    </select>
+                </div>
+                <div class="search-block search-block-2">
+                    <label for="search-target">Для</label>
+                    <select id="search-target" name="Purpose">
+                        <option @(Model.Purpose.IsNullOrEmpty() ? "selected" : "") value=""></option>
+                        <option @(Model.Purpose == "Для брака, семьи" ? "selected" : "") value="Для брака, семьи">Брака, семьи</option>
+                        <option @(Model.Purpose == "Для дружбы" ? "selected" : "") value="Для дружбы">Дружбы</option>
+                        <option @(Model.Purpose == "Для любви, романтических отношений" ? "selected" : "") value="Для любви, романтических отношений">Любви, романтических отношений</option>
+                        <option @(Model.Purpose == "Для секса" ? "selected" : "") value="Для секса">Секса</option>
+                        <option @(Model.Purpose == "Для совместного занятия хобби" ? "selected" : "") value="Для совместного занятия хобби">Совместного занятия хобби</option>
+                        <option @(Model.Purpose == "Для совместного проживания" ? "selected" : "") value="Для совместного проживания">Совместного проживания</option>
+
+                    </select>
+                </div>
+                <div class="search-block search-block-3">
+                    <label for="search-age-min">В возрасте</label>
+                    <div class="input-range">
+                        <div class="input-range-min">
+                            <input type="text" value="@Model.MinAge" name="MinAge" placeholder="от" id="search-age-min">
+                        </div>
+                        <div class="input-range-max">
+                            <input type="text" value="@Model.MaxAge" name="MaxAge" placeholder="до" id="search-age-max">
+                        </div>
+                    </div>
+                </div>
+                <div class="search-block search-block-1">
+                    <label for="search-date-min">Дата</label>
+                    <div class="input-range">
+                        <div class="input-range-min">
+                            <input type="text" name="MinDate" arg="date" value="@Model.MinDate" placeholder="сегодня" id="search-date-min">
+                        </div>
+                        <div class="input-range-max">
+                            <input type="text" name="MaxDate" arg="date" value="@Model.MaxDate" placeholder="завтра" id="search-date-max">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="search-block search-block-1">
+                    <input type="text" name="Keywords" placeholder="Ключевые слова" value="@Model.Keywords" />
+                </div>
+                <div class="search-block search-block-4">
+                    @Html.CheckBox("Compartible", Model.Compartible, new { @class = "pull-left" })
+                    @*<input type="checkbox" name="search-is-my" id="search-is-my" class="pull-left">*@
+                    <label for="Compartible" class="label-middle small-label" style="width: 175px"><span>Показывать только объявления, где я подхожу по критериям</span></label>
+                </div>
+                <div class="search-block search-block-3"></div>
+                <div class="search-block search-block-1">
+                    <button type="submit" class="btn btn-blue btn-upper btn-xsmall">Поиск</button>
+                </div>
+            </div>
+        }
+    </div>
+    <ul class="list-unstyled meeting-list">
+        @foreach (var meet in Model.Result)
+        {
+            <li class="meeting-list-item">
+                <div class="meeting-list-item-img"><a href="@Url.Action("Index", "Cabinet", new { ID = meet.User.ID })"><img src="@meet.User.Avatar?w=80&h=80&mode=crop"></a></div>
+                <div class="meeting-list-item-content">
+                    <strong>@meet.User.NameAndSurname </strong>@meet.Date.Value.ToString("d MMMM") приглашает @(meet.TargetSex ? "парня" : "девушку") @meet.Years лет в @meet.Place.Type.ToLower() @meet.Place.Name
+                    <div><span class="icon icon-place"></span><a href="@Url.Action("View", "Places", new{ID=meet.PlaceID})"  data-title="@meet.Place.Type @meet.Place.Name" class="address address-small">@meet.Place.Adress</a></div>
+                    @if (meet.Comment.IsFilled())
+                    {
+                        <div class="comment">@meet.Comment</div>
+                    }
+                </div>
+            </li>
+        }
+
+    </ul>
+</div>

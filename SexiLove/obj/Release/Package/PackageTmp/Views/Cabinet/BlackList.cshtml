@@ -1,0 +1,45 @@
+﻿@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - Черный список";
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+
+}
+@model IList<User>
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Cabinet")">Личный кабинет</a></li>
+        <li class="breadcrumb-item"><a href="#">Мой черный список</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+<ul class="list-unstyled user-list">
+    @if (!Model.Any())
+    {
+        <li class="user-list-item">
+            <b>У вас никого нет в черном списке</b>
+
+        </li>
+    }
+    @foreach (var user in Model)
+    {
+        <li class="user-list-item">
+            <div class="user-list-item-img"><img src="@user.Avatar?w=80&h=80"></div>
+            <div class="user-list-item-content">
+                <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID=user.ID})">@user.NameAndSurname</a></h4>
+                <div class="user-list-item-content-age">@user.Age</div>
+                <div class="user-list-item-content-city">Город: @user.Town.Name</div>
+            </div>
+            <div class="user-list-item-info">
+                <div class="close"><a href="@Url.Action("RemoveFromList", "Cabinet", new{ID = user.ID})">Удалить из списка</a></div>
+            </div>
+        </li>
+    }
+
+</ul>
+@section sidebar{
+    @Html.Action("LeftMenu")
+}

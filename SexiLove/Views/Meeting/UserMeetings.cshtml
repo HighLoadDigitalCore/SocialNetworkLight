@@ -1,0 +1,64 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@model List<Meeting>
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+}
+@if (Model.Any())
+{
+    <div class="row">
+        <h2>Список встреч пользователя:</h2>
+        @foreach (var meet in Model)
+        {
+            var me = meet.MeetingPeoples.FirstOrDefault(x => x.UserID == currentUser.ID);
+            <div class="invite">
+                @if (me == null)
+                {
+                    <div class="invite-block">
+                        <div class="input-checkbox">
+                            <input type="checkbox" name="search-1" value="@meet.ID" class="small WishToMeet">
+                            <label for="search-1">Я хочу пойти</label>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="invite-block">
+                        @if (me.Status == 0)
+                        {
+                            <div class="status status-waiting">
+                                <span class="icon icon-status icon-status-waiting2"></span>Заявка в ожидании
+                            </div>
+
+                            <div class="input-checkbox">
+                                <input type="checkbox" name="search-1" checked="checked" value="@meet.ID" class="small WishToMeet">
+                                <label for="search-1">Я хочу пойти</label>
+                            </div>
+                        }
+                        else if (me.Status == -1)
+                        {
+
+                            <div class="status status-no pull-right"><span class="icon icon-status icon-status-no2"></span>Заявка отклонена</div>
+
+                        }
+                        else if (me.Status == 1)
+                        {
+                            <div class="status status-yes pull-right"><span class="icon icon-status icon-status-yes2"></span>Заявка принята</div>
+                        }
+                    </div>
+                }
+                <div><strong>@meet.Date.Value.ToString("d MMMMM") </strong>приглашаю @(meet.TargetSex ? "парня" : "девушку") @meet.Years в @meet.Place.Type.ToLower() @meet.Place.Name</div>
+                <div>
+                    <span class="icon icon-place"></span>
+                    <a href="@Url.Action("View", "Places", new{ID = meet.PlaceID})" data-title="@meet.Place.Type &quot;@meet.Place.Name&quot;" class="address address-small">@meet.Place.Adress</a>
+                </div>
+                @if (meet.Comment.IsFilled())
+                {
+                    <div class="comment comment-light">@meet.Comment</div>
+                }
+            </div>
+        }
+
+    </div>
+}

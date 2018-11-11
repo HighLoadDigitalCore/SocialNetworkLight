@@ -1,0 +1,115 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - Знакомства";
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+@model MyDatings
+
+
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Cabinet")">Личный кабинет</a></li>
+        <li class="breadcrumb-item"><a href="#">Мои знакомства</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+<div class="tabs tabs-date">
+    <ul class="list-unstyled row">
+        <li class="column third"><a href="#tabs-1" arg="col1">Со мной знакомятся</a></li>
+        <li class="column third"><a href="#tabs-2" arg="col2">Я хочу познакомится</a></li>
+        <li class="column third"><a href="#tabs-3" arg="col3">Взаимные симпатии</a></li>
+    </ul>
+    <div id="tabs-1" style="display: none">
+        <h3>
+            Со мной знакомятся @if (Model.Income.Any(x => !x.IsRead))
+            {
+                <span class="color-blue">+@Model.Income.Count(x => !x.IsRead)</span>
+            }
+        </h3>
+        <ul class="list-unstyled user-list">
+            @foreach (var dating in Model.Income)
+            {
+                <li class="user-list-item @(dating.IsRead ? "" : "highlighted")">
+                    <div class="user-list-item-img"><img src="@dating.GetAvatar(currentUser)?w=80&h=80"></div>
+                    <div class="user-list-item-content">
+                        <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID=dating.GetUserID(currentUser)})">@dating.GetFriendName(currentUser)</a></h4>
+                        <div class="user-list-item-content-age">@dating.GetAge(currentUser)</div>
+                        <div class="user-list-item-content-city">@dating.CreateDate.ToString("d MMMMM в HH:mm")</div>
+                    </div>
+                    <div class="user-list-item-info">
+                        <div class="status status-no"><span class="icon icon-status icon-status-no"></span><a href="@Url.Action("DatingAccept", "Cabinet", new{ID=dating.ID, Target = -1})">Отклонить заявку</a></div>
+                        <div class="status status-yes"><span class="icon icon-status icon-status-yes"></span><a href="@Url.Action("DatingAccept", "Cabinet", new{ID=dating.ID, Target = 1})">Принять заявку</a></div>
+                    </div>
+
+                </li>
+            }
+            @if (!Model.Income.Any())
+            {
+                <li class="user-list-item">
+                    <b>У вас пока нет предложений знакомств</b>
+                </li>
+            }
+
+        </ul>
+    </div>
+    <div id="tabs-2" style="display: none">
+        <h3>Я хочу познакомится</h3>
+        <ul class="list-unstyled user-list">
+            @foreach (var dating in Model.Outcome)
+            {
+                <li class="user-list-item @(dating.IsRead ? "" : "highlighted")">
+                    <div class="user-list-item-img"><img src="@dating.GetAvatar(currentUser)?w=80&h=80"></div>
+                    <div class="user-list-item-content">
+                        <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID=dating.GetUserID(currentUser)})">@dating.GetFriendName(currentUser)</a></h4>
+                        <div class="user-list-item-content-age">@dating.GetAge(currentUser)</div>
+
+                    </div>
+                    <div class="user-list-item-info">
+                        <div>Отправил(а) @dating.CreateDate.ToString("d MMMMM в HH:mm")</div>
+                        <div class="status status-@(dating.Status == -1 ? "no" : (dating.Status == 0 ? "waiting" : "yes"))"><span class="icon icon-status icon-status-@(dating.Status == -1 ? "no" : (dating.Status == 0 ? "waiting" : "yes"))"></span>Заявка @(dating.Status == -1 ? "отклонена" : (dating.Status == 0 ? "в ожидании" : "принята"))</div>
+                    </div>
+                </li>
+
+            }
+            @if (!Model.Outcome.Any())
+            {
+                <li class="user-list-item">
+                    <b>Вы еще ни с кем не пытались знакомиться</b>
+                </li>
+            }
+
+        </ul>
+    </div>
+    <div id="tabs-3" style="display: none">
+        <h3>Взаимные симпатии (@Model.OnDate.Count)</h3>
+        <ul class="list-unstyled user-list">
+            @foreach (var dating in Model.OnDate)
+            {
+                <li class="user-list-item @(dating.IsRead ? "" : "highlighted")">
+                    <div class="user-list-item-img"><img src="@dating.GetAvatar(currentUser)?w=80&h=80"></div>
+                    <div class="user-list-item-content">
+                        <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID=dating.GetUserID(currentUser)})">@dating.GetFriendName(currentUser)</a></h4>
+                        <div class="user-list-item-content-age">@dating.GetAge(currentUser)</div>
+                        <div class="user-list-item-content-city">@dating.CreateDate.ToString("d MMMMM в HH:mm")</div>
+                    </div>
+                </li>
+            }
+            @if (!Model.OnDate.Any())
+            {
+                <li class="user-list-item">
+                    <b>У вас пока нет взаимных симпатий</b>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@section sidebar{
+    @Html.Action("LeftMenu")
+}

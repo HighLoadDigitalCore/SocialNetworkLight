@@ -1,0 +1,28 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - Каталог мест";
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+@model PlacesSearch
+
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Каталог мест</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+@if (currentUser.ID > 0)
+{
+    <div class="row text-center"><a href="@Url.Action("Create", "Places")" class="btn btn-green btn-upper btn-small">Предложить место</a></div>
+}
+@Html.Action("Search", "Places")
+
+@section sidebar{
+    @Html.Action("LeftMenu", "Cabinet")
+}

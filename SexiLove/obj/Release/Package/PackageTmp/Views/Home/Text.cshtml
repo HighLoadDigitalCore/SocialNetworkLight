@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@model SexiLove.Models.TextPage
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">@Model.Name</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+@Html.Raw(Model.Text)
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}
+

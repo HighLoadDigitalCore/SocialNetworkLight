@@ -1,0 +1,67 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Каталог мест";
+    ViewBag.ContentCSS = "";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    var topPlaces = new xDBDataContext().Places.Where(x => x.PlaceImages.Any()).OrderByDescending(x => x.IsVip).ThenByDescending(x => x.PlaceRatings.Where(z => z.Name == "").Sum(z => z.Rating)).Take(20);
+}
+
+@model PlacesSearch
+
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Каталог мест</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+
+@if (topPlaces.Any())
+{
+    <h2 class="best-places">Лучшие места</h2>
+    <section class="row places-vip">
+
+
+        <div class="carousel row">
+            @foreach (var user in topPlaces)
+            {
+                <div class="users-item slide">
+                    <a href="@Url.Action("View", "Places", new {ID = user.ID})">
+                        <div class="users-item-img"><img src="@user.PlaceImages.First().Path?w=90&h=90&mode=crop"></div>
+                        <div class="users-item-title">
+                            @user.Name<br>
+                        </div>
+                    </a>
+                </div>@*<div class="users-item slide">
+                    <a href="@Url.Action("View", "Places", new {ID = user.ID})">
+                        <div class="users-item-img"><img src="@user.PlaceImages.First().Path?w=90&h=90&mode=crop"></div>
+                        <div class="users-item-title">
+                            @user.Name<br>
+                        </div>
+                    </a>
+                </div>*@
+            }
+        </div>
+        @if (currentUser.webpages_UsersInRoles.Any(x => x.webpages_Role.RoleName == "Moderator"))
+        {
+        <a class="byu-place-btn" href="@Url.Action("Buy", "Cabinet")#place">Попасть сюда</a>
+        }
+    </section>
+            
+
+}
+
+
+@if (currentUser.ID > 0)
+{
+    <div class="row text-center"><a href="@Url.Action("Create", "Places")" class="btn btn-green btn-upper btn-small">Предложить место</a></div>
+}
+@Html.Action("Search", "Places")
+
+@section sidebar{
+    @Html.Action("LeftMenu", "Cabinet")
+}

@@ -1,0 +1,29 @@
+﻿@using SexiLove.Extensions
+<div id="QST">
+    <br/>
+    <br/>
+    <h3>Чем мы можем вам помочь?</h3>
+    <div class="content-form row">
+        @using (Ajax.BeginForm("QstForm", "Home", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "QST", InsertionMode = InsertionMode.Replace }))
+        {
+            if (((string)ViewBag.Error).IsFilled())
+            {
+                <div class="error">@ViewBag.Error</div>
+            }
+            if (ViewBag.Success == null)
+            {
+                <div class="content-form-left">
+                    <textarea class="textarea-light" name="Message"></textarea>
+                </div>
+                <div class="content-form-right">
+                    <button class="btn btn-green btn-upper btn-small" type="submit">Отправить</button>
+                </div>
+            }
+            else
+            {
+                <span style="font-weight: bold; font-size: 18px">Ваше сообщение успешно отправлено.</span>
+            }
+        }
+    </div>
+
+</div>

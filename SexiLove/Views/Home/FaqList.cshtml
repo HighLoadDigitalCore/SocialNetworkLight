@@ -1,0 +1,17 @@
+﻿@model IList<SexiLove.Models.FAQ>
+@if (Model.Any())
+{
+    <h2>Популярные вопросы</h2>
+    <div class="accordion">
+        @foreach (var qst in Model)
+        {
+            <h4>@qst.Qst</h4>
+            <div>
+                <p>
+                    @qst.Ans
+                    </p>
+                </div>
+
+        }
+    </div>
+}

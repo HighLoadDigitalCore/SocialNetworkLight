@@ -1,0 +1,10 @@
+﻿@using SexiLove.Models
+@model IList<Town>
+@{
+    int? townID = ViewBag.SelectedTown;
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser;
+}
+@foreach (var town in Model)
+{
+    <option @(((townID.HasValue && townID.Value == town.ID) || (currentUser!=null && currentUser.TownID == town.ID) ) ? "selected" : (!townID.HasValue && town.Name == "Москва" ? "selected" : "")) value="@town.ID">@town.Name</option>
+}

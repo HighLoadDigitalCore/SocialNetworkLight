@@ -1,0 +1,235 @@
+﻿@using System.Activities.Statements
+@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - Профиль";
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.ContentCSS = "user" + (currentUser.ID > 0 && currentUser.ID == Model.ID ? " user-shift" : "");
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    var afterBlackList = (int?)ViewBag.AfterBlackList;
+    var afterMessage = (int?)ViewBag.AfterMessage;
+    var afterFriend = (int?)ViewBag.AfterFriend;
+    var afterDated = (int?)ViewBag.AfterDated;
+    var afterMeet = (int?)ViewBag.AfterMeet;
+}
+@model User
+@section modal{
+
+    @if (currentUser.ID > 0 /*&& currentUser.Meetings.Any(x => x.Date.HasValue && x.Date.Value >= DateTime.Now.Date)*/)
+    {
+        var meets = currentUser.Meetings.Where(x => x.Date.HasValue && x.Date.Value >= DateTime.Now.Date);
+
+        <div id="dialog-meet" title="Приглашение на встречу" class="dialog">
+            @if (currentUser.Meetings.Any(x => x.Date.HasValue && x.Date.Value >= DateTime.Now.Date))
+            {
+                <h6>Выберите встречу:</h6>
+            }
+            <ul class="list-unstyled meet-list">
+                @foreach (var meet in meets)
+                {
+                    var tp = meet.MeetingPeoples.FirstOrDefault(x => x.UserID == Model.ID);
+                    <li class="meet-list-item @( tp!=null ? ("active") : "")">
+                        @if (tp != null)
+                        {
+                            if (tp.Status == 0)
+                            {
+                                <div class="status status-waiting pull-right"><span class="icon icon-status icon-status-waiting"></span>Заявка отправлена</div>
+                            }
+                            else if (tp.Status == 1)
+                            {
+                                <div class="status status-yes pull-right"><span class="icon icon-status icon-status-yes"></span>Заявка принята</div>
+                            }
+                            else if (tp.Status == -1)
+                            {
+                                <div class="status status-no pull-right"><span class="icon icon-status icon-status-no"></span>Заявка отклонена</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="status pull-right"><a class="ToMeet" href="@Url.Action("MeetUser", "Cabinet", new { MeetID = meet.ID, TargetUserID = Model.ID })">Отправить приглашение</a></div>
+                        }
+                        <div><strong>@meet.Date.Value.ToString("d MMMMM") </strong>приглашаю @(meet.TargetSex ? "парня" : "девушку") @meet.Years в @meet.Place.Type.ToLower() @meet.Place.Name</div>
+                        <div>
+                            <span class="icon icon-place"></span>
+                            <a href="@Url.Action("View", "Places", new{ID = meet.PlaceID})" data-title="@meet.Place.Type &quot;@meet.Place.Name&quot;" class="address address-small">@meet.Place.Adress</a>
+                        </div>
+
+                    </li>
+                }
+            </ul>
+            <div class="row text-center"><a href="@Url.Action("Create", "Meeting")" class="btn btn-green btn-upper btn-small">Создать встречу</a></div>
+        </div>
+    }
+
+
+    <div id="dialog-photo" title="Ваши фотографии" class="dialog">
+        @using (Html.BeginForm("UploadPhoto", "Cabinet", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <input type="file" name="file1" class="dialog-img">
+                <input type="file" name="file2" class="dialog-img">
+                <input type="file" name="file3" class="dialog-img">
+            </div>
+
+            <div class="row text-center">
+                <a href="#" id="more-photo" class="content-link">Еще фотографии</a>
+                <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+            </div>
+        }
+    </div>
+    @if (Model != null)
+    {
+        <div id="dialog-message" title="Написать сообщение" class="dialog">
+            @using (Html.BeginForm("WriteMessage", "Cabinet", new { TargetID = Model.ID }, FormMethod.Post))
+            {
+
+                <textarea class="textarea-light" name="Message" required></textarea>
+                <div class="row text-center">
+                    <button type="submit" class="btn btn-green btn-upper btn-small">Отправить</button>
+                </div>
+
+            }
+        </div>
+    }
+    @if (afterMessage.HasValue)
+    {
+        <div id="dialog1" title="Пользователь получил ваше сообщение" class="dialog">
+            <p>@Model.NameAndSurname получил(а) ваше сообщение.</p>
+        </div>
+    }
+    @if (afterFriend.HasValue)
+    {
+        <div id="dialog1" title="Пользователь получил(а) ваше приглашение к дружбе" class="dialog">
+            <p>После подтверждения он(а) появится в списке ваших друзей.</p>
+        </div>
+    }
+    @if (afterDated.HasValue)
+    {
+        <div id="dialog1" title="Пользователь получил(а) ваше приглашение к знакомству" class="dialog">
+            <p>После прочтения он(а) подтвердит или отклонит ваше приглашение.</p>
+        </div>
+    }
+    @if (afterMeet.HasValue)
+    {
+        <div id="dialog1" title="Пользователь получил(а) ваше приглашение на встречу" class="dialog">
+            <p>После прочтения он(а) подтвердит или отклонит ваше приглашение.</p>
+        </div>
+    }
+    @*
+        <div id="dialog1" title="Пользователь получил ваше сообщение" class="dialog">
+            <p>Зинаиде Карпенко пришло ваше уведомление познакомиться с ней.</p>
+        </div>
+    *@
+    @if (afterBlackList.HasValue)
+    {
+        <div id="dialog2" title="@(afterBlackList.Value == 1 ? "Пользователь занесен в ваш черный список" : "Пользователь удален из черного списка")" class="dialog">
+            @if (afterBlackList.Value == 1)
+            {
+                <p>Чтобы разбанить его перейдите по <a href="@Url.Action("LockUser", "Cabinet", new {Target = Model.ID})">ссылке.</a></p>
+            }
+            else
+            {
+                <p>Пользователь удален из черного списка. <br /><br /> Вы снова можете обмениваться сообщениями, знакомиться и приглашать друг друга на встречи.</p>
+            }
+        </div>
+    }
+}
+@section sidebar{
+    @Html.Action("LeftMenu")
+}
+@if (Model != null)
+{
+    <div class="row">
+        <header class="content-header row">
+            <ol class="list-unstyled breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Личный кабинет</a></li>
+                <li class="breadcrumb-item"><a href="#">@(Model.ID == currentUser.ID ? "Моя страница" : (Model.UserName + " " + Model.UserSurname))</a></li>
+            </ol>
+            @Html.Action("Account", "Cabinet")
+        </header>
+        <div class="user-left">
+            <div class="user-images">
+                @if (Model.UserPhotos.Any())
+                {
+                    <div class="user-images-big"><img src="@Model.UserPhotos.First().Path?w=260"></div>
+                }
+                @if (Model.UserPhotos.Count > 1 && UserSetting.HasAccess(Model, currentUser, "ViewPhotos"))
+                {
+                    <div class="user-images-more">
+                        @foreach (var p in Model.UserPhotos.Skip(1).Take(3))
+                        {
+                            <img src="@p.Path?w=70&h=70">
+                        }
+                    </div>
+                }
+
+                <div class="user-images-all">
+                    @if (Model.ID == currentUser.ID)
+                    {
+                        <a href="#" id="add-photos">Добавить фотографии</a>
+                        <br>
+                    }
+                    @if (UserSetting.HasAccess(Model, currentUser, "ViewPhotos"))
+                    {
+                        <a href="@Url.Action("AllPhoto", "Cabinet", new {ID = Model.ID})">Все фото</a>
+                    }
+                    <br />
+                    @if (Model.ID == currentUser.ID)
+                    {
+                        <a href="@Url.Action("ProfileEdit", "Cabinet")">Редактировать профиль</a>
+                    }
+
+                </div>
+                @if (currentUser.ID > 0 && Model.ID != currentUser.ID && !Model.IsLocked(currentUser))
+                {
+                    <div class="user-buttons">
+                        @if (UserSetting.HasAccess(Model, currentUser, "SendLetters"))
+                        {
+                            <a class="btn btn-green btn-xbig" id="send-message" href="#"><span class="icon icon-message"></span>Написать сообщение</a>
+                        }
+                        @if (!Model.IsDated(currentUser) && UserSetting.HasAccess(Model, currentUser, "OfferFriendship"))
+                        {
+                            <a class="btn btn-orange btn-xbig" href="@Url.Action("ToDated", new{TargetID = Model.ID})"><span class="icon icon-say"></span>Познакомиться</a>
+                        }
+                        @if (UserSetting.HasAccess(Model, currentUser, "InviteForMeeting"))
+                        {
+                            <a class="btn btn-blue btn-xbig" id="send-meet" href="#"><span class="icon icon-meet"></span>Пригласить<br> на встречу</a>
+                        }
+                        <a class="btn btn-red btn-xbig" href="#"><span class="icon icon-money"></span>Подарить<br> VIP-аккаунт</a>
+                        @if (!Model.IsFriends(currentUser) && UserSetting.HasAccess(Model, currentUser, "ViewFriends"))
+                        {
+                            <a class="btn btn-red btn-xbig btn-wide" href="@Url.Action("ToFriends", new{TargetID = Model.ID})">Добавить в друзья</a>
+                        }
+
+                    </div>
+                    <div class="user-links">
+                        <a href="@Url.Action("LockUser", "Cabinet", new{Target = Model.ID})"><span class="icon icon-close"></span>Добавить в черный список</a><br>
+                        <a href="#"><span class="icon icon-warning"></span>Пожаловаться</a>
+                    </div>
+                }
+                else if (currentUser.ID > 0 && Model.ID != currentUser.ID && currentUser.IsILockedUser(Model))
+                {
+                    <br />
+                    <div class="user-links">
+                        <a href="@Url.Action("LockUser", "Cabinet", new {Target = Model.ID})"><span class="icon icon-close"></span>Убрать из черного списока</a><br>
+                        <a href="#"><span class="icon icon-warning"></span>Пожаловаться</a>
+                    </div>
+
+                }
+            </div>
+        </div>
+        <div class="user-right">
+            <h2 class="user-title">@Model.UserName @Model.UserPatrinomic @Model.UserSurname</h2>
+            <div class="user-status">Я открыт@(Model.Sex ?? true ? "" : "а") для знакомств</div>
+            <dl>
+                @Html.Raw(Model.ToPropList())
+            </dl>
+        </div>
+    </div>
+    if (currentUser.ID > 0 && currentUser.ID != Model.ID && UserSetting.HasAccess(Model, currentUser, "ViewMeetings"))
+    {
+        @Html.Action("UserMeetings", "Meeting", new { UserID = Model.ID })
+    }
+}

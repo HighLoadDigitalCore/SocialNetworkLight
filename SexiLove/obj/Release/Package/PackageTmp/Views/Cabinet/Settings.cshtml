@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "CityLove - Настройки";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+
+}
+@using System.Linq
+@using System.Web.UI.WebControls
+@using SexiLove.Extensions
+@model SexiLove.Models.UserSetting
+<div class="row">
+    <header class="content-header row">
+        <ol class="list-unstyled breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Личный кабинет</a></li>
+            <li class="breadcrumb-item"><a href="#">Настройки</a></li>
+        </ol>
+        @Html.Action("Account", "Cabinet")
+    </header>
+</div>
+@using (Html.BeginForm("Settings", "Cabinet", FormMethod.Post, new { @class = "setting-form" }))
+{
+    if (Model.Error.IsFilled())
+    {
+        <p>
+            <div class="error">
+                @Html.Raw(Model.Error)
+            </div>
+        </p>
+    }
+    <div class="content-column">
+        <h2>Общие настройки</h2>
+        <h3>Изменить пароль</h3>
+        <input type="password" value="@Model.OldPass" name="OldPass" placeholder="Введите новый пароль">
+        <input type="password" value="@Model.NewPass" name="NewPass" placeholder="Повторите новый пароль">
+        <h3>Изменить E-mail</h3>
+        <input type="email" value="@Model.OldMail" name="OldMail" placeholder="Введите текущий адрес">
+        <input type="email" value="@Model.NewMail" name="NewMail" placeholder="Введите новый адрес">
+    </div>
+    <div class="content-column">
+        <h2>Настройки приватности</h2>
+        <h4>Кто может отправлять мне сообщения?</h4>
+        <select name="SendLetters">
+            <option value="1" @(Model.SendLetters == 1 ? "selected" : "")>Только друзья</option>
+            <option value="2" @(Model.SendLetters == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.SendLetters == -1 ? "selected" : "")>Никто</option>
+            <option value="0" @(Model.SendLetters == 0 ? "selected" : "")>Все</option>
+        </select>
+        
+        <h4>Кто может приглашать меня на встречи?</h4>
+        <select name="InviteForMeeting">
+            <option value="1" @(Model.InviteForMeeting == 1 ? "selected" : "")>Только друзья</option>
+            <option value="2" @(Model.InviteForMeeting == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.InviteForMeeting == -1 ? "selected" : "")>Никто</option>
+            <option value="0" @(Model.InviteForMeeting == 0 ? "selected" : "")>Все</option>
+        </select>
+        <h4>Кто может предлагать мне знакомства?</h4>
+        <select name="OfferFriendship">
+            <option value="1" @(Model.OfferFriendship == 1 ? "selected" : "")>Только друзья</option>
+            <option value="2" @(Model.OfferFriendship == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.OfferFriendship == -1 ? "selected" : "")>Никто</option>
+            <option value="0" @(Model.OfferFriendship == 0 ? "selected" : "")>Все</option>
+        </select>
+        <h4>Кто может просматривать мои встречи?</h4>
+        <select name="ViewMeetings">
+            <option value="1" @(Model.ViewMeetings == 1 ? "selected" : "")>Только друзья</option>
+            <option value="2" @(Model.ViewMeetings == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.ViewMeetings == -1 ? "selected" : "")>Никто</option>
+            <option value="0" @(Model.ViewMeetings == 0 ? "selected" : "")>Все</option>
+        </select>
+        <h4>Кто может предлагать дружбу?</h4>
+        <select name="ViewFriends">
+            @*<option value="1" @(Model.ViewFriends == 1 ? "selected" : "")>Только друзья</option>*@
+            <option value="2" @(Model.ViewFriends == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.ViewFriends == -1 ? "selected" : "")>Никто</option>
+            <option value="0" @(Model.ViewFriends == 0 ? "selected" : "")>Все</option>
+        </select>
+        <h4>Кто может смотреть мои фотографии?</h4>
+        <select name="ViewPhotos">
+            <option value="1" @(Model.ViewPhotos == 1 ? "selected" : "")>Только друзья</option>
+            <option value="2" @(Model.ViewPhotos == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.ViewPhotos == -1 ? "selected" : "")>Никто</option>
+            <option value="0" @(Model.ViewPhotos == 0 ? "selected" : "")>Все</option>
+        </select>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-green btn-upper btn-small">Сохранить настройки</button>
+    </div>
+
+}
+@section sidebar
+{
+    @Html.Action("LeftMenu")
+}

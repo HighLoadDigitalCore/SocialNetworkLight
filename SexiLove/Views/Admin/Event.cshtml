@@ -1,0 +1,32 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Обновления мероприятий";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model SexiLove.Models.BlockedUser
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+
+        </li>
+    </ol>
+</header>
+@using (Html.BeginForm("Event", "Admin", FormMethod.Post, new { @class = "row" }))
+{
+    <h2>
+        @ViewBag.Message
+    </h2>
+    <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Обновить мероприятия</button>
+}
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

@@ -1,0 +1,220 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - Мои встречи";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    var db = ((BaseController)ViewContext.Controller).DB;
+
+}
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Личный кабинет</a></li>
+        <li class="breadcrumb-item"><a href="#">Мои встречи</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+@if (currentUser.ID > 0)
+{
+    var myMeets = db.Meetings.Where(x => x.Author == currentUser.ID && x.Date.HasValue && x.Date.Value.Date >= DateTime.Now.Date);
+    var meetsForMe = db.Meetings.Where(x => x.Date.HasValue && x.Date.Value.Date >= DateTime.Now.Date && x.Author != currentUser.ID && x.MeetingPeoples.Any(z => z.UserID == currentUser.ID));
+    var lastMeets = db.Meetings.Where(x => x.Date.HasValue && x.Date.Value.Date < DateTime.Now.Date && x.MeetingPeoples.Any(z => z.UserID != currentUser.ID && z.Status == 1) && x.MeetingPeoples.Any(z => z.UserID == currentUser.ID && z.Status == 1));
+    var goingMeets = db.Meetings.Where(x => x.Date.HasValue && x.Date.Value.Date >= DateTime.Now.Date && x.Author!=currentUser.ID && x.MeetingPeoples.Any(z => z.UserID == currentUser.ID && z.Status == 1)).
+        Concat(db.Meetings.Where(x => x.Author == currentUser.ID && x.Date.HasValue && x.Date.Value.Date >= DateTime.Now.Date && x.MeetingPeoples.Any(z => z.Status == 1 && z.UserID != currentUser.ID)));
+
+    <div class="tabs tabs-meet">
+        <ul class="list-unstyled row">
+            <li class="column fourth"><a href="#tabs-1" arg="col1">Я приглашаю</a></li>
+            <li class="column fourth"><a href="#tabs-2" arg="col2">Меня приглашают</a></li>
+            <li class="column fourth"><a href="#tabs-3" arg="col3">Иду на встречи</a></li>
+            <li class="column fourth"><a href="#tabs-4" arg="col4">Встречи состоялись</a></li>
+        </ul>
+        <div id="tabs-1" style="display: none">
+            @foreach (var meet in myMeets)
+            {
+                <div class="invite">
+                    <div><strong>@meet.Date.Value.ToString("d MMMMM") </strong>приглашаю @(meet.TargetSex ? "парня" : "девушку") @meet.Years в @meet.Place.Type.ToLower() @meet.Place.Name</div>
+                    <div><span class="icon icon-place"></span><a href="@Url.Action("View", "Places", new{ID=meet.PlaceID})" data-title="@meet.Place.Type &quot;@meet.Place.Name&quot;" class="address address-small">@meet.Place.Adress</a></div>
+                    @if (meet.Comment.IsFilled())
+                    {
+                        <div class="comment comment-light">@meet.Comment</div>
+                    }
+                    <div class="close"><a href="@Url.Action("DeleteMeet", "Meeting", new { ID = meet.ID })">Удалить</a></div>
+                </div>
+                if (meet.MeetingPeoples.Any(x => x.UserID != currentUser.ID))
+                {
+                    <ul class="list-unstyled user-list">
+                        @foreach (var user in meet.MeetingPeoples.Where(x => x.UserID != currentUser.ID))
+                        {
+                            <li class="user-list-item">
+                                <div class="user-list-item-img"><img src="@user.User.Avatar?w=80&h=80"></div>
+                                <div class="user-list-item-content">
+                                    <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new {ID = user.UserID})">@user.User.NameAndSurname</a></h4>
+                                    <div class="user-list-item-content-age">@user.User.Age</div>
+                                </div>
+                                <div class="user-list-item-info">
+                                    <div>Отправил(а) @user.SendDate.ToString("d MMMM, HH:mm")</div>
+                                    @if (user.Status == 0)
+                                    {
+                                        if (user.UserID == currentUser.ID)
+                                        {
+                                            <div class="status status-no"><span class="icon icon-status icon-status-no"></span><a href="@Url.Action("MeetAccept", "Meeting", new {ID = user.ID, Target = -1})">Отклонить заявку</a></div>
+                                            <div class="status status-yes"><span class="icon icon-status icon-status-yes"></span><a href="@Url.Action("MeetAccept", "Meeting", new {ID = user.ID, Target = 1})">Принять заявку</a></div>
+
+                                        }
+                                        else
+                                        {
+
+                                            <div class="status status-waiting">
+                                                <span class="icon icon-status icon-status-waiting"></span>Заявка в ожидании
+                                            </div>
+
+                                        }
+
+                                    }
+                                    else if (user.Status == 1)
+                                    {
+                                        <div class="status status-yes"><span class="icon icon-status icon-status-yes"></span>Заявка принята</div>
+                                    }
+                                    else if (user.Status == -1)
+                                    {
+                                        <div class="status status-no"><span class="icon icon-status icon-status-no"></span>Заявка отклонена</div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+            }
+        </div>
+        <div id="tabs-2" style="display: none">
+            @foreach (var meet in meetsForMe)
+            {
+                <div class="invite">
+                    <div><strong>@meet.Date.Value.ToString("d MMMMM") </strong>приглашаю @(meet.TargetSex ? "парня" : "девушку") @meet.Years в @meet.Place.Type.ToLower() @meet.Place.Name</div>
+                    <div><span class="icon icon-place"></span><a href="@Url.Action("View", "Places", new{ID=meet.PlaceID})" data-title="@meet.Place.Type &quot;@meet.Place.Name&quot;" class="address address-small">@meet.Place.Adress</a></div>
+                    @if (meet.Comment.IsFilled())
+                    {
+                        <div class="comment comment-light">@meet.Comment</div>
+                    }
+                    <div class="close"><a href="@Url.Action("DeleteMeet", "Meeting", new { ID = meet.ID })">Удалить</a></div>
+                </div>
+                if (meet.MeetingPeoples.Any(x => x.UserID == currentUser.ID))
+                {
+                    <ul class="list-unstyled user-list">
+                        @foreach (var user in meet.MeetingPeoples.Where(x => x.UserID == currentUser.ID))
+                        {
+                            <li class="user-list-item">
+                                <div class="user-list-item-img"><img src="@user.User.Avatar?w=80&h=80"></div>
+                                <div class="user-list-item-content">
+                                    <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new {ID = user.UserID})">@user.User.NameAndSurname</a></h4>
+                                    <div class="user-list-item-content-age">@user.User.Age</div>
+                                </div>
+                                <div class="user-list-item-info">
+                                    <div>Отправил(а) @user.SendDate.ToString("d MMMM, HH:mm")</div>
+                                    @if (user.Status == 0)
+                                    {
+                                        @*
+                                            <div class="status status-waiting">
+                                                <span class="icon icon-status icon-status-waiting"></span>Заявка в ожидании
+
+
+                                            </div>
+                                        *@
+                                        <div class="status status-no"><span class="icon icon-status icon-status-no"></span><a href="@Url.Action("MeetAccept", "Meeting", new{ID=user.ID, Target = -1})">Отклонить заявку</a></div>
+                                        <div class="status status-yes"><span class="icon icon-status icon-status-yes"></span><a href="@Url.Action("MeetAccept", "Meeting", new{ID=user.ID, Target = 1})">Принять заявку</a></div>
+
+                                    }
+                                    else if (user.Status == 1)
+                                    {
+                                        <div class="status status-yes"><span class="icon icon-status icon-status-yes"></span>Заявка принята</div>
+                                    }
+                                    else if (user.Status == -1)
+                                    {
+                                        <div class="status status-no"><span class="icon icon-status icon-status-no"></span>Заявка отклонена</div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+            }
+
+        </div>
+        <div id="tabs-3" style="display: none">
+            @foreach (var meet in goingMeets)
+            {
+                <div class="invite">
+                    <div><strong>@meet.Date.Value.ToString("d MMMMM") </strong>приглашаю @(meet.TargetSex ? "парня" : "девушку") @meet.Years в @meet.Place.Type.ToLower() @meet.Place.Name</div>
+                    <div><span class="icon icon-place"></span><a href="@Url.Action("View", "Places", new{ID=meet.PlaceID})" data-title="@meet.Place.Type &quot;@meet.Place.Name&quot;" class="address address-small">@meet.Place.Adress</a></div>
+                    @if (meet.Comment.IsFilled())
+                    {
+                        <div class="comment comment-light">@meet.Comment</div>
+                    }
+                    <div class="close"><a href="@Url.Action("DeleteMeet", "Meeting", new { ID = meet.ID })">Удалить</a></div>
+                </div>
+                if (meet.MeetingPeoples.Any(x => x.UserID != currentUser.ID))
+                {
+                    <ul class="list-unstyled user-list">
+                        @foreach (var user in meet.MeetingPeoples.Where(x => x.UserID != currentUser.ID))
+                        {
+                            <li class="user-list-item">
+                                <div class="user-list-item-img"><img src="@user.User.Avatar?w=80&h=80"></div>
+                                <div class="user-list-item-content">
+                                    <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new {ID = user.UserID})">@user.User.NameAndSurname</a></h4>
+                                    <div class="user-list-item-content-age">@user.User.Age</div>
+                                </div>
+                                <div class="user-list-item-info">
+                                    <div>Отправил(а) @user.SendDate.ToString("d MMMM, HH:mm")</div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+            }
+        </div>
+        <div id="tabs-4" style="display: none">
+            @foreach (var meet in lastMeets)
+            {
+                <div class="invite">
+                    <div><strong>@meet.Date.Value.ToString("d MMMMM") </strong>приглашаю @(meet.TargetSex ? "парня" : "девушку") @meet.Years в @meet.Place.Type.ToLower() @meet.Place.Name</div>
+                    <div><span class="icon icon-place"></span><a href="@Url.Action("View", "Places", new{ID=meet.PlaceID})" data-title="@meet.Place.Type &quot;@meet.Place.Name&quot;" class="address address-small">@meet.Place.Adress</a></div>
+                    @if (meet.Comment.IsFilled())
+                    {
+                        <div class="comment comment-light">@meet.Comment</div>
+                    }
+                    <div class="close"><a href="@Url.Action("DeleteMeet", "Meeting", new { ID = meet.ID })">Удалить</a></div>
+                </div>
+                if (meet.MeetingPeoples.Any(x => x.UserID != currentUser.ID))
+                {
+                    <ul class="list-unstyled user-list">
+                        @foreach (var user in meet.MeetingPeoples.Where(x => x.UserID != currentUser.ID))
+                        {
+                            <li class="user-list-item">
+                                <div class="user-list-item-img"><img src="@user.User.Avatar?w=80&h=80"></div>
+                                <div class="user-list-item-content">
+                                    <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new {ID = user.UserID})">@user.User.NameAndSurname</a></h4>
+                                    <div class="user-list-item-content-age">@user.User.Age</div>
+                                </div>
+                                <div class="user-list-item-info">
+                                    <div>Отправил(а) @user.SendDate.ToString("d MMMM, HH:mm")</div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+            }
+
+        </div>
+    </div>
+}
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

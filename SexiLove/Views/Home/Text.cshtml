@@ -1,0 +1,33 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Models
+@model SexiLove.Models.TextPage
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">@Model.Name</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+@Html.Raw(Model.Text)
+@if (Model.URL == "help")
+{
+    @Html.Action("FaqList")
+}
+
+@if (Model.ShowForm)
+{
+    @Html.Action("QstForm")
+}
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}
+

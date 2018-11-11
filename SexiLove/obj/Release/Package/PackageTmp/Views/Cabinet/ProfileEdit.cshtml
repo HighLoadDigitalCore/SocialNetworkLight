@@ -1,0 +1,409 @@
+﻿@{
+    ViewBag.Title = "CityLove - Редактирование профиля";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+
+}
+@using SexiLove.Extensions
+@model SexiLove.Models.User
+
+@if (Model != null)
+{
+    <header class="content-header row">
+        <ol class="list-unstyled breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Личный кабинет</a></li>
+            <li class="breadcrumb-item"><a href="#">Заполнение профиля</a></li>
+        </ol>
+        @Html.Action("Account", "Cabinet")
+    </header>
+    <div class="tabs tabs-profile">
+        <ul class="list-unstyled">
+            <li class="column seventh">
+                <a href="#tabs-1" arg="col1">
+                    <div>Главное</div>
+                </a>
+            </li>
+            <li class="column seventh">
+                <a href="#tabs-2" arg="col2">
+                    <div>Внешность</div>
+                </a>
+            </li>
+            <li class="column seventh">
+                <a href="#tabs-3" arg="col3">
+                    <div>Карьера и доход</div>
+                </a>
+            </li>
+            <li class="column seventh">
+                <a href="#tabs-4" arg="col4">
+                    <div>Вредные привычки</div>
+                </a>
+            </li>
+            <li class="column seventh">
+                <a href="#tabs-5" arg="col5">
+                    <div>Жизненные приоритеты</div>
+                </a>
+            </li>
+            <li class="column seventh">
+                <a href="#tabs-6" arg="col6">
+                    <div>Отношение к сексу</div>
+                </a>
+            </li>
+            <li class="column seventh" >
+                <a href="#tabs-7" arg="col7">
+                    <div>О себе</div>
+                </a>
+            </li>
+        </ul>
+        @using (Html.BeginForm("ProfileEdit", "Cabinet", FormMethod.Post))
+        {
+            <div id="tabs-1" style="display: none">
+                <div class="content-column-1">
+                    <h3>Как вас зовут?</h3>
+                    <input type="hidden" value="@Model.ID" name="ID" />
+                    <input type="text" placeholder="Имя" class="@(Model.IsPost && Model.UserName.IsNullOrEmpty() ? "err" : "")" name="UserName" value="@Model.UserName">
+                    <input type="text" placeholder="Фамилия" name="UserSurname" value="@Model.UserSurname">
+                    <input type="text" placeholder="Отчество" name="UserPatrinomic" value="@Model.UserPatrinomic">
+                    <h3>Дата рождения</h3>
+                    <div class="row">
+                        <div class="select-date">
+                            <div class="select-date-day">
+                                <select name="Day" id="reg-date-day @(Model.IsPost && !Model.Day.HasValue ? "err" : "")">
+                                    <option>День</option>
+                                    @for (int i = 1; i <= 31; i++)
+                                    {
+                                        <option value="@i" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Day == i ? "selected" : "")>@i</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="select-date-month @(Model.IsPost && !Model.Month.HasValue ? "err" : "")">
+                                <select name="Month">
+                                    <option>Месяц</option>
+                                    <option value="1" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 1 ? "selected" : "")>Январь</option>
+                                    <option value="2" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 2 ? "selected" : "")>Февраль</option>
+                                    <option value="3" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 3 ? "selected" : "")>Март</option>
+                                    <option value="4" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 4 ? "selected" : "")>Апрель</option>
+                                    <option value="5" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 5 ? "selected" : "")>Май</option>
+                                    <option value="6" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 6 ? "selected" : "")>Июнь</option>
+                                    <option value="7" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 7 ? "selected" : "")>Июль</option>
+                                    <option value="8" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 8 ? "selected" : "")>Август</option>
+                                    <option value="9" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 9 ? "selected" : "")>Сентябрь</option>
+                                    <option value="10" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 10 ? "selected" : "")>Октябрь</option>
+                                    <option value="11" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 11 ? "selected" : "")>Ноябрь</option>
+                                    <option value="12" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Month == 12 ? "selected" : "")>Декабрь</option>
+                                </select>
+                            </div>
+                            <div class="select-date-year @(Model.IsPost && !Model.Year.HasValue ? "err" : "")">
+                                <select name="Year">
+                                    <option>Год</option>
+                                    @for (int i = DateTime.Now.Year - 18; i >= DateTime.Now.Year - 60; i--)
+                                    {
+                                        <option value="@i" @(Model.BirthDate.HasValue && Model.BirthDate.Value.Year == i ? "selected" : "")>@i</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <h3>Пол</h3>
+                    <select name="Sex" id="reg-sex">
+                        <option value="True" @(Model.Sex.HasValue && Model.Sex.Value ? "selected" : "")>Мужской</option>
+                        <option value="False" @(Model.Sex.HasValue && !Model.Sex.Value ? "selected" : "")>Женский</option>
+                    </select>
+                    <h3>Ориентация</h3>
+                    <select name="Orientation">
+                        <option value="" @(Model.Orientation.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Гетеро" @(Model.Orientation == "Гетеро" ? "selected" : "")>Гетеро</option>
+                    </select>
+                    <h3>Цель знакомства</h3>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Purpose1" @(Model.Purposes.Contains("Для брака, семьи") ? "checked" : "") value="Для брака, семьи">
+                        <label for="Purpose1" class="normal">Для брака, семьи</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Purpose2" @(Model.Purposes.Contains("Для дружбы") ? "checked" : "") value="Для дружбы">
+                        <label for="Purpose2" class="normal">Для дружбы</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Purpose3" @(Model.Purposes.Contains("Для любви, романтических отношений") ? "checked" : "") value="Для любви, романтических отношений">
+                        <label for="Purpose3" class="normal">Для любви, романтических отношений</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Purpose4" @(Model.Purposes.Contains("Для секса") ? "checked" : "") value="Для секса">
+                        <label for="Purpose4" class="normal">Для секса</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Purpose5" @(Model.Purposes.Contains("Для совместного занятия хобби") ? "checked" : "") value="Для совместного занятия хобби">
+                        <label for="Purpose5" class="normal">Для совместного занятия хобби</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Purpose6" @(Model.Purposes.Contains("Для совместного проживания") ? "checked" : "") value="Для совместного проживания">
+                        <label for="Purpose6" class="normal">Для совместного проживания</label>
+                    </div>
+                    <input type="text" name="AddPurpose" value="@Model.AddPurpose" placeholder="Напишите другую цель">
+                    <h3>Кого я ищу</h3>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="SearchFor1" value="Девушку" @(Model.SearchFors.Contains("Девушку") ? "checked" : "")>
+                        <label for="SearchFor1" class="normal">Девушку</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="SearchFor2" value="Парня" @(Model.SearchFors.Contains("Парня") ? "checked" : "")>
+                        <label for="SearchFor2" class="normal">Парня</label>
+                    </div>
+                    <input type="text" name="AddSearchFor" value="@Model.AddSearchFor" placeholder="Напишите другую цель">
+                    <h3>Отношения</h3>
+                    <select name="Relations">
+                        <option value="" @(Model.Relations.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Свободен/Свободна" @(Model.Relations == "Свободен/Свободна" ? "selected" : "")>Свободен/Свободна</option>
+                    </select>
+                    <h3>Дети</h3>
+                    <select name="HasChildren">
+                        <option value="" @(Model.HasChildren.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Да" @(Model.HasChildren == "Да" ? "selected" : "")>Да</option>
+                        <option value="Нет" @(Model.HasChildren == "Нет" ? "selected" : "")>Нет</option>
+                    </select>
+                    <div class="row input-checkbox">
+                        <input type="radio" name="Sponsor" value="Я желаю быть спонсором" @(Model.Sponsor == "Я желаю быть спонсором" ? "checked" : "")>
+                        <label for="" class="normal">Я желаю быть спонсором</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="radio" name="Sponsor" value="Я ищу спонсора" @(Model.Sponsor == "Я ищу спонсора" ? "checked" : "")>
+                        <label for="" class="normal">Я ищу спонсора</label>
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+            <div id="tabs-2" style="display: none">
+                <div class="content-column-1">
+
+                    <h3>Рост</h3>
+                    <input type="text" placeholder="см" value="@Model.Height" name="Height">
+                    <h3>Вес</h3>
+                    <input type="text" placeholder="кг" value="@Model.Weight" name="Weight">
+                    <h3>Телосложение</h3>
+                    <select name="Body">
+                        <option value="" @(Model.Body.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Стройное" @(Model.Body == "Стройное" ? "selected" : "")>Стройное</option>
+                    </select>
+                    <h3>Тип внешности</h3>
+                    <select name="Appearence">
+                        <option value="" @(Model.Appearence.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Европейский" @(Model.Appearence == "Европейский" ? "selected" : "")>Европейский</option>
+                    </select>
+                    <h3>Цвет глаз</h3>
+                    <select name="Eyes">
+                        <option value="" @(Model.Eyes.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Карие" @(Model.Eyes == "Карие" ? "selected" : "")>Карие</option>
+                    </select>
+                    <h3>Цвет волос</h3>
+                    <select name="Hears">
+                        <option value="" @(Model.Hears.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Черный" @(Model.Hears == "Черный" ? "selected" : "")>Черный</option>
+                    </select>
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="tabs-3" style="display: none">
+                <div class="content-column-1">
+
+                    <h3>Образование</h3>
+                    <select name="Education">
+                        <option value="" @(Model.Education.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Среднее незаконченное" @(Model.Education == "Среднее незаконченное" ? "selected" : "")>Среднее незаконченное</option>
+                    </select>
+                    <h3>Специальность</h3>
+                    <input type="text" placeholder="" name="Spec" value="@Model.Spec">
+                    <h3>Сфера деятельности/профессия</h3>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Job1" value="Менеджер" @(Model.Jobs.Contains("Менеджер") ? "checked" : "")>
+                        <label for="Job1" class="normal">Менеджер</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Job2" value="Руководитель" @(Model.Jobs.Contains("Руководитель") ? "checked" : "")>
+                        <label for="Job2" class="normal">Руководитель</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" name="Job3" value="Менеджер" @(Model.Jobs.Contains("Водитель") ? "checked" : "")>
+                        <label for="Job3" class="normal">Водитель</label>
+                    </div>
+                    <input type="text" name="AddJob" value="@Model.AddJob" placeholder="Введите свою сферу деятельности">
+                    <h3>Тип работы</h3>
+                    <select name="WorkType">
+                        <option value="" @(Model.WorkType.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Работаю в компании" @(Model.WorkType == "Работаю в компании" ? "selected" : "")>Работаю в компании</option>
+                    </select>
+                    <input type="text" name="CompanyName" placeholder="Название компании" value="@Model.CompanyName">
+                    <h3>Я зарабатываю</h3>
+                    <select name="Earn">
+                        <option value="" @(Model.Earn.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Еле хвататет на жизнь" @(Model.Earn == "Еле хвататет на жизнь" ? "selected" : "")>Еле хвататет на жизнь</option>
+                    </select>
+                    <h3>Средний доход в месяц</h3>
+                    <input type="text" placeholder="рублей" value="@Model.MonthSalary" name="MonthSalary">
+                    <h3>Автомобиль</h3>
+                    <select name="HasCar">
+                        <option value="" @(Model.HasCar.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Нет" @(Model.HasCar == "Нет" ? "selected" : "")>Нет</option>
+                        <option value="Да" @(Model.HasCar == "Да" ? "selected" : "")>Да</option>
+                    </select>
+                    <h3>Жилищные условия</h3>
+                    <select name="LivingConditions">
+                        <option value="" @(Model.LivingConditions.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Снимаю квартиру один" @(Model.LivingConditions == "Снимаю квартиру один" ? "selected" : "")>Снимаю квартиру один</option>
+                    </select>
+                    <h3>Город проживания ваш родной город?</h3>
+                    <select name="LivingTown">
+                        <option value="" @(Model.LivingTown.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Нет" @(Model.LivingTown == "Нет" ? "selected" : "")>Нет</option>
+                        <option value="Да" @(Model.LivingTown == "Да" ? "selected" : "")>Да</option>
+                    </select>
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="tabs-4" style="display: none">
+                <div class="content-column-1">
+
+                    <h3>Курение</h3>
+                    <select name="Smoking">
+                        <option value="" @(Model.Smoking.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Курю каждый день" @(Model.Smoking == "Курю каждый день" ? "selected" : "")>Курю каждый день</option>
+
+                    </select>
+                    <h3>Алкоголь</h3>
+                    <select name="Drinking">
+                        <option value="" @(Model.Drinking.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Пью очень много" @(Model.Drinking == "Пью очень много" ? "selected" : "")>Пью очень много</option>
+                    </select>
+                    <h3>Наркотики</h3>
+                    <select name="Drugs">
+                        <option value="" @(Model.Drugs.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Не употреблял и не собираюсь" @(Model.Drugs == "Не употреблял и не собираюсь" ? "selected" : "")>Не употреблял и не собираюсь</option>
+                    </select>
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="tabs-5" style="display: none">
+                <div class="content-column-1">
+
+                    <h3>Самое главное в жизни</h3>
+                    <select name="LifePriority">
+                        <option value="" @(Model.LifePriority.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Семья и дети" @(Model.LifePriority == "Семья и дети" ? "selected" : "")>Семья и дети</option>
+                    </select>
+                    <input type="text" placeholder="Другое" name="AddLifePriority" value="@Model.AddLifePriority">
+                    <h3>Какую музыку вы любите</h3>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="я меломан" @(Model.Musics.Contains("я меломан")) name="Music1">
+                        <label for="Music1" class="normal">я меломан</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="отечественный рок" @(Model.Musics.Contains("отечественный рок")) name="Music2">
+                        <label for="Music2" class="normal">отечественный рок</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="зарубежный рок" @(Model.Musics.Contains("зарубежный рок")) name="Music3">
+                        <label for="Music3" class="normal">зарубежный рок</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="отечественый хип-хип" @(Model.Musics.Contains("отечественый хип-хип")) name="Music4">
+                        <label for="Music4" class="normal">отечественый хип-хип</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="зарубежный хип-хоп" @(Model.Musics.Contains("зарубежный хип-хоп")) name="Music5">
+                        <label for="Music5" class="normal">зарубежный хип-хоп</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="отечественный поп" @(Model.Musics.Contains("отечественный поп")) name="Music6">
+                        <label for="Music6" class="normal">отечественный поп</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="зарубежный поп" @(Model.Musics.Contains("зарубежный поп")) name="Music7">
+                        <label for="Music7" class="normal">зарубежный поп</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="электронную/клубную музыку" @(Model.Musics.Contains("электронную/клубную музыку")) name="Music8">
+                        <label for="Music8" class="normal">электронную/клубную музыку</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="шансон" @(Model.Musics.Contains("шансон")) name="Music9">
+                        <label for="Music9" class="normal">шансон</label>
+                    </div>
+                    <div class="row input-checkbox">
+                        <input type="checkbox" value="народную/фолк" @(Model.Musics.Contains("народную/фолк")) name="Music10">
+                        <label for="Music10" class="normal">народную/фолк</label>
+                    </div>
+                    <h3>Занятия спортом</h3>
+                    <input type="text" placeholder="Заполните" name="Sport" value="@Model.Sport">
+                    <h3>Хобби</h3>
+                    <input type="text" placeholder="Заполните" name="Hobby" value="@Model.Hobby">
+                    <h3>Любимые книги</h3>
+                    <input type="text" placeholder="Заполните" name="Books" value="@Model.Books">
+                    <h3>Любимые фильмы</h3>
+                    <input type="text" placeholder="Заполните" name="Films" value="@Model.Films">
+                    <h3>Качества, которые цените в людях</h3>
+                    <input type="text" placeholder="Заполните" name="GoodKinds" value="@Model.GoodKinds">
+                    <h3>Качества, которые не принимаете в людях</h3>
+                    <input type="text" placeholder="Заполните" name="BadKinds" value="@Model.BadKinds">
+                    <h3>Главная цель в жизни</h3>
+                    <input type="text" placeholder="Заполните" name="MainPurpose" value="@Model.MainPurpose">
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="tabs-6" style="display: none">
+                <div class="content-column-1">
+
+                    <h3>Роль секса в вашей жизни</h3>
+                    <select name="SexRole">
+                        <option value="" @(Model.SexRole.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Это главная цель жизни" @(Model.SexRole == "Это главная цель жизни" ? "selected" : "")>Это главная цель жизни</option>
+                    </select>
+                    <h3>Как часто вы бы хотели заниматься сексом?</h3>
+                    <select name="SexPeriod">
+                        <option value="" @(Model.SexPeriod.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Несколько раз в день" @(Model.SexPeriod == "Несколько раз в день" ? "selected" : "")>Несколько раз в день</option>
+                    </select>
+                    <h3>Отношение к нестандартному сексу</h3>
+                    <select name="SexRelation">
+                        <option value="" @(Model.SexRelation.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option value="Я практикую нестандартный секс" @(Model.SexRelation == "Я практикую нестандартный секс" ? "selected" : "")>Я практикую нестандартный секс</option>
+                    </select>
+                    <input type="text" placeholder="Напишите подробнее" value="@Model.SexRelationDetail" name="SexRelationDetail">
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="tabs-7" style="display: none">
+                <div class="content-column-1">
+
+                    <textarea placeholder="Напишите о себе" name="AboutMe">@Model.AboutMe</textarea>
+                    <div class="row">
+                        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+                    </div>
+
+                </div>
+            </div>
+
+        }
+
+    </div>
+}
+@section sidebar
+    {
+    @Html.Action("LeftMenu")
+}

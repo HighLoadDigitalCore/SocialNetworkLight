@@ -1,0 +1,98 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - " + Model.Name;
+    ViewBag.ContentCSS = "place";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+@model Place
+@if (Model != null)
+{
+    <script type="text/javascript">
+        function rateAtmos() {
+            if ($('#rateAtmo').attr('arg').length) {
+                $.post('/Places/RateAtmos', { PlaceID: $('#rateAtmo').attr('uid'), Atmo: $('#rateAtmo').attr('arg') }, function (d) {
+                    document.location.href = document.location.href.replace('#', '');
+                });
+            }
+        }
+    </script>
+    <header class="content-header row">
+        <ol class="list-unstyled breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Places", "Places")">Каталог мест</a></li>
+            <li class="breadcrumb-item"><a href="#">@Model.Type &laquo;@Model.Name&raquo;</a></li>
+        </ol>
+        @Html.Action("Account", "Cabinet")
+    </header>
+    <div class="place-left">
+        <div class="place-images">
+            <div class="place-images-big">
+                <a href="@Url.Action("AllPhoto", new{ID = Model.ID})">
+                    <img src="@(Model.PlaceImages.Any() ? (Model.PlaceImages.First().Path + "?w=260") : "")" width="260">
+                </a>
+            </div>
+
+            @if (Model.PlaceImages.Count > 1)
+            {
+                <div class="place-images-more">
+                    @foreach (var img in Model.PlaceImages.Skip(1))
+                    {
+                        <a href="@Url.Action("AllPhoto", new{ID = Model.ID})">
+                            <img src="@img.Path?w=40&h=40">
+                        </a>
+                    }
+                </div>
+            }
+
+            @*<div class="place-images-all"><a href="places-photo.html">Все фото</a></div>*@
+        </div>
+        @if (currentUser.ID > 0)
+        {
+            <div class="place-like">
+                @if (Model.PlaceRatings.Count(x => x.Name != "" && x.UserID == currentUser.ID) < 3)
+                {
+                    <label for="aura">Оценить атмосферу</label>
+                    <select name="aura" id="aura" onchange=" $('#rateAtmo').attr('arg', $(this).val()) ">
+                        <option selected=""></option>
+                        @foreach (var atm in Model.AlowedAtmos(currentUser))
+                        {
+                            <option>@atm</option>
+                        }
+                    </select>
+                    <a href="#" uid="@Model.ID" class="btn btn-green btn-small" id="rateAtmo" onclick=" rateAtmos(); return false; " style="text-align: center">Оценить атмосферу</a>
+                    <br />
+                    <br />
+                    <br />
+                }
+                @if (!Model.PlaceRatings.Any(x => x.UserID == currentUser.ID && x.Name == ""))
+                {
+                    <a href="@Url.Action("Like", "Places", new {ID = Model.ID})" class="btn btn-green btn-small"><span class="icon icon-like"></span>Мне нравится</a>
+                }
+            </div>
+        }
+    </div>
+    <div class="place-right">
+        <h2 class="place-title">@(Model.Type) "@Model.Name"</h2>
+        <div><span class="icon icon-place"></span><a href="#" data-title="@Model.Type @Model.Name" class="address">@Model.Adress</a></div>
+        <dl>
+            @if (Model.Metro.IsFilled())
+            {
+                <dt>Метро: </dt>
+                <dd>@Model.Metro</dd>
+            }
+            <dt>Средний чек:</dt>
+            <dd>@((Model.MinPay + Model.MaxPay) / 2) руб.</dd>
+            <dt>Рейтинг:</dt>
+            <dd class="rating-value">@Model.CommonRating</dd>
+        </dl>
+        <p>@Model.Description</p>
+    </div>
+}
+@section sidebar{
+    @Html.Action("LeftMenu", "Cabinet")
+}

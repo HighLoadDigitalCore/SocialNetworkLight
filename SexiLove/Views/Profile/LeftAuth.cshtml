@@ -1,0 +1,44 @@
+﻿<div class="sidebar-block">
+    <header class="header-title2"><span class="icon icon-link"></span>Войти при помощи</header>
+    <script src="//ulogin.ru/js/ulogin.js"></script>
+    <div class="btn btn-social">
+        <div class="social-wrap">
+            <div id="uLogin1" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=vkontakte;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div>
+        </div>
+        <span>Вконтакте</span>
+    </div>
+    <div class="btn btn-social">
+        <div class="social-wrap">
+            <div id="uLogin2" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=odnoklassniki;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div>
+        </div>
+        <span>Одноклассники</span>
+    </div>
+    <div class="btn btn-social">
+        <div class="social-wrap">
+            <div id="uLogin3" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=facebook;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div>
+        </div>
+        <span>Facebook</span>
+    </div>
+    <div class="btn btn-social">
+        <div class="social-wrap">
+            <div id="uLogin4" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=google;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div>
+        </div>
+        <span>Google</span>
+    </div>
+    <div class="btn btn-social">
+        <div class="social-wrap">
+            <div id="uLogin5" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=twitter;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div>
+        </div>
+        <span>Twitter</span>
+    </div>
+    <div class="btn btn-social">
+        <div class="social-wrap">
+            <div id="uLogin6" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=mailru;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div>
+        </div>
+        <span>Mail.ru</span>
+    </div>
+    <div class="sidebar-block-reg">или <a href="@Url.Action("Register")">Зарегистрируйтесь</a></div>
+</div>
+
+@Html.Action("AuthInner")
+

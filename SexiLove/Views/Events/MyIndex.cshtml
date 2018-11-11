@@ -1,0 +1,24 @@
+﻿@using SexiLove.Models
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Мои мероприятия";
+    
+    ViewBag.ContentCSS = "";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Cabinet")">Личный кабинет</a></li>
+        <li class="breadcrumb-item"><a href="#">Мои мероприятия</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+@Html.Action("My")
+@section sidebar{
+    @Html.Action("LeftMenu", "Cabinet")
+}

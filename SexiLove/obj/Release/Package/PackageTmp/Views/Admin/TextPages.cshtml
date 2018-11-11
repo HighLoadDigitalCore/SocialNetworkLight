@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "CityLove - Список страниц";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@model IList<SexiLove.Models.TextPage>
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            @*<a style="font-weight: bold" href="@Url.Action("EditTown")">Добавить город</a>*@
+        </li>
+    </ol>
+</header>
+<table width="100%" class="tbl">
+    <tr>
+        <th>URL</th>
+        <th>Название</th>
+
+    </tr>
+    @foreach (var town in Model)
+    {
+        <tr>
+            <td>
+                <a href="@Url.Action("EditTextPage", "Admin", new{ ID = town.ID })">@town.URL</a>
+            </td>
+            <td>
+                @town.Name
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

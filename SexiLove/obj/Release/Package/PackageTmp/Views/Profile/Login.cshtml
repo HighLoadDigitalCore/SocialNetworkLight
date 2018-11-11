@@ -1,0 +1,40 @@
+﻿@using SexiLove.Extensions
+@model SexiLove.Models.LoginModel
+
+<div id="dialog-login" title="Вход" class="dialog">
+    <div id="LoginForm">
+        @using (Ajax.BeginForm("Login", "Profile", new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "LoginForm", OnSuccess = "afterLogin();" }))
+        {
+            <label for="Email">Логин</label>
+            @Html.TextBox("Email", Model.Email)
+
+            <label for="Password">Пароль</label>
+            @Html.Password("Password", Model.Password)
+
+            <div class="row">
+                <div class="pull-left">
+                    @Html.CheckBox("Remember", Model.Remember)
+
+                    <label for="Remember">Запомнить</label>
+                </div>
+                <div class="pull-right"><a href="#" arg="restore" onclick="showRestore()">Забыли пароль?</a></div>
+            </div>
+            <button type="submit" class="btn btn-green">Войти</button>
+
+        }
+    </div>
+    @if (Model.Message.IsFilled())
+    {
+        <div class="row">
+            <ul class="list-unstyled">
+                <li class="error">@Model.Message</li>
+            </ul>
+        </div>
+    }
+    @if (Model.RedirectURL.IsFilled())
+    {
+        <script type="text/javascript">
+            document.location.href = '@(Model.RedirectURL)';
+        </script>
+    }
+</div>

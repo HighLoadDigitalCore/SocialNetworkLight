@@ -1,0 +1,431 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4F2CA7FD-3DBE-4B91-A8A0-E90D0EDF8996}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SexiLove</RootNamespace>
+    <AssemblyName>SexiLove</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ImageResizer">
+      <HintPath>..\packages\ImageResizer.3.4.3\lib\ImageResizer.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageResizer.Mvc">
+      <HintPath>..\packages\ImageResizer.Mvc.3.4.3\lib\ImageResizer.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.0\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.30506.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.30506.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\CabinetController.cs" />
+    <Compile Include="Controllers\DatingController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MeetingController.cs" />
+    <Compile Include="Controllers\PlacesController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
+    <Compile Include="Controllers\RoboController.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\Helpers\CSVParser.cs" />
+    <Compile Include="Extensions\Helpers\DecimalBinder.cs" />
+    <Compile Include="Extensions\Helpers\Invertor.cs" />
+    <Compile Include="Extensions\Helpers\Logger.cs" />
+    <Compile Include="Extensions\Helpers\MIMETypeWrapper.cs" />
+    <Compile Include="Extensions\Helpers\Translitter.cs" />
+    <Compile Include="Extensions\Helpers\WebRequestWrapper.cs" />
+    <Compile Include="Extensions\Mail\Config.cs" />
+    <Compile Include="Extensions\Mail\IConfig.cs" />
+    <Compile Include="Extensions\Mail\MailSender.cs" />
+    <Compile Include="Extensions\Mail\MailSetting.cs" />
+    <Compile Include="Extensions\Mail\MailTemplateConfig.cs" />
+    <Compile Include="Extensions\Mail\NotifyMail.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AuthModels.cs" />
+    <Compile Include="Models\BaseController.cs" />
+    <Compile Include="Models\DatingModels.cs" />
+    <Compile Include="Models\EventModels.cs" />
+    <Compile Include="Models\MeetingModels.cs" />
+    <Compile Include="Models\PageModels.cs" />
+    <Compile Include="Models\Parser.cs" />
+    <Compile Include="Models\PlacesModels.cs" />
+    <Compile Include="Models\SettingsModels.cs" />
+    <Compile Include="Models\xDB.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>xDB.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="css\ie.css" />
+    <Content Include="css\jquery.ui.timepicker.css" />
+    <Content Include="css\pickmeup.css" />
+    <Content Include="css\styles.css" />
+    <Content Include="css\styles.min.css" />
+    <Content Include="fonts\PFBeauSansPro-Bold.svg" />
+    <Content Include="fonts\PFBeauSansPro-Thin.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="img\404.png" />
+    <Content Include="img\arrow-down.png" />
+    <Content Include="img\arrow-left-focused.png" />
+    <Content Include="img\arrow-left.png" />
+    <Content Include="img\arrow-left2-focused.png" />
+    <Content Include="img\arrow-left2.png" />
+    <Content Include="img\arrow-right-focused.png" />
+    <Content Include="img\arrow-right.png" />
+    <Content Include="img\arrow-right2-focused.png" />
+    <Content Include="img\arrow-right2.png" />
+    <Content Include="img\bg-vip.gif" />
+    <Content Include="img\credit.png" />
+    <Content Include="img\download-img.jpg" />
+    <Content Include="img\icon-account.png" />
+    <Content Include="img\icon-check-red.png" />
+    <Content Include="img\icon-check.png" />
+    <Content Include="img\icon-check2.png" />
+    <Content Include="img\icon-close-red.png" />
+    <Content Include="img\icon-close.png" />
+    <Content Include="img\icon-close2-red.png" />
+    <Content Include="img\icon-close2.png" />
+    <Content Include="img\icon-close3.png" />
+    <Content Include="img\icon-dating-green.png" />
+    <Content Include="img\icon-dating.png" />
+    <Content Include="img\icon-dating2.png" />
+    <Content Include="img\icon-diamond.png" />
+    <Content Include="img\icon-eye-closed-red.png" />
+    <Content Include="img\icon-eye-open-red.png" />
+    <Content Include="img\icon-f.png" />
+    <Content Include="img\icon-g.png" />
+    <Content Include="img\icon-like.png" />
+    <Content Include="img\icon-link.png" />
+    <Content Include="img\icon-meet.png" />
+    <Content Include="img\icon-meeting-green.png" />
+    <Content Include="img\icon-meeting.png" />
+    <Content Include="img\icon-message.png" />
+    <Content Include="img\icon-money.png" />
+    <Content Include="img\icon-o.png" />
+    <Content Include="img\icon-place.png" />
+    <Content Include="img\icon-place2.png" />
+    <Content Include="img\icon-places-green.png" />
+    <Content Include="img\icon-places.png" />
+    <Content Include="img\icon-purse-focused.png" />
+    <Content Include="img\icon-purse.png" />
+    <Content Include="img\icon-reg.png" />
+    <Content Include="img\icon-search.png" />
+    <Content Include="img\icon-select-dark.png" />
+    <Content Include="img\icon-select.png" />
+    <Content Include="img\icon-setting-focused.png" />
+    <Content Include="img\icon-setting.png" />
+    <Content Include="img\icon-status-no.png" />
+    <Content Include="img\icon-status-no2.png" />
+    <Content Include="img\icon-status-waiting.png" />
+    <Content Include="img\icon-status-waiting2.png" />
+    <Content Include="img\icon-status-yes.png" />
+    <Content Include="img\icon-status-yes2.png" />
+    <Content Include="img\icon-t.png" />
+    <Content Include="img\icon-user.png" />
+    <Content Include="img\icon-vk.png" />
+    <Content Include="img\icon-warning.png" />
+    <Content Include="img\logo-2.png" />
+    <Content Include="img\logo.png" />
+    <Content Include="img\main-header-bg.jpg" />
+    <Content Include="img\sidebar-bg.gif" />
+    <Content Include="img\social-btn-f.png" />
+    <Content Include="img\social-btn-vk.png" />
+    <Content Include="js\jquery.pickmeup.js" />
+    <Content Include="js\jquery.ui.timepicker.js" />
+    <Content Include="js\main.js" />
+    <Content Include="js\main.min.js" />
+    <Content Include="pic\about-1.jpg" />
+    <Content Include="pic\about-2.jpg" />
+    <Content Include="pic\about-3.jpg" />
+    <Content Include="pic\owner\1.jpg" />
+    <Content Include="pic\place-1.jpg" />
+    <Content Include="pic\place-2.jpg" />
+    <Content Include="pic\place-3.jpg" />
+    <Content Include="pic\place-big-1.jpg" />
+    <Content Include="pic\place-big-2.jpg" />
+    <Content Include="pic\place-logo.jpg" />
+    <Content Include="pic\place-small-1.jpg" />
+    <Content Include="pic\place-small-2.jpg" />
+    <Content Include="pic\place-small-3.jpg" />
+    <Content Include="pic\place\1.jpg" />
+    <Content Include="pic\place\2.jpg" />
+    <Content Include="pic\user-1.jpg" />
+    <Content Include="pic\user-2.jpg" />
+    <Content Include="pic\user-2.png" />
+    <Content Include="pic\user-big-1.jpg" />
+    <Content Include="pic\user-small-1.jpg" />
+    <Content Include="pic\users\1.jpg" />
+    <Content Include="pic\users\2.jpg" />
+    <Content Include="pic\users\3.jpg" />
+    <Content Include="pic\users\4.jpg" />
+    <Content Include="pic\users\5.jpg" />
+    <Content Include="pic\users\6.jpg" />
+    <Content Include="pic\users\7.jpg" />
+    <Content Include="pic\users\8.jpg" />
+    <None Include="Properties\PublishProfiles\CityLove.pubxml" />
+    <None Include="Scripts\jquery-2.1.1.intellisense.js" />
+    <Content Include="Scripts\jquery-2.1.1.js" />
+    <Content Include="Scripts\jquery-2.1.1.min.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Scripts\jquery-2.1.1.min.map" />
+    <Content Include="Views\Profile\Login.cshtml" />
+    <Content Include="Views\Shared\InnerPage.cshtml" />
+    <Content Include="Views\Cabinet\Index.cshtml" />
+    <Content Include="Views\Home\TownList.cshtml" />
+    <Content Include="Views\Profile\Register.cshtml" />
+    <Content Include="Views\Profile\Restore.cshtml" />
+    <Content Include="Views\Home\NotFound.cshtml" />
+    <Content Include="Views\Cabinet\ProfileEdit.cshtml" />
+    <Content Include="Views\Cabinet\LeftMenu.cshtml" />
+    <Content Include="Views\Cabinet\AllPhoto.cshtml" />
+    <Content Include="Views\Dating\Index.cshtml" />
+    <Content Include="Views\Dating\Search.cshtml" />
+    <Content Include="Views\Cabinet\BlackList.cshtml" />
+    <Content Include="Views\Cabinet\Messages.cshtml" />
+    <Content Include="Views\Cabinet\Friends.cshtml" />
+    <Content Include="Views\Cabinet\FriendsIndex.cshtml" />
+    <Content Include="Views\Cabinet\Datings.cshtml" />
+    <Content Include="Views\Places\Places.cshtml" />
+    <Content Include="Views\Places\Search.cshtml" />
+    <Content Include="Views\Places\Create.cshtml" />
+    <Content Include="Views\Places\View.cshtml" />
+    <Content Include="Views\Meeting\Index.cshtml" />
+    <Content Include="Views\Meeting\ShortSearch.cshtml" />
+    <Content Include="Views\Meeting\FullSearch.cshtml" />
+    <Content Include="Views\Meeting\Create.cshtml" />
+    <Content Include="Views\Meeting\My.cshtml" />
+    <Content Include="Views\Meeting\UserMeetings.cshtml" />
+    <Content Include="Views\Cabinet\Account.cshtml" />
+    <Content Include="Views\Admin\Towns.cshtml" />
+    <Content Include="Views\Admin\EditTown.cshtml" />
+    <Content Include="Views\Admin\EditUser.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\EditUserPass.cshtml" />
+    <Content Include="Views\Admin\TextPages.cshtml" />
+    <Content Include="Views\Admin\EditTextPage.cshtml" />
+    <Content Include="Views\Home\Text.cshtml" />
+    <Content Include="Views\Cabinet\Refill.cshtml" />
+    <Content Include="Views\Cabinet\Settings.cshtml" />
+    <Content Include="Views\Cabinet\Buy.cshtml" />
+    <Content Include="Views\Home\PageBg.cshtml" />
+    <Content Include="Views\Cabinet\VisitsList.cshtml" />
+    <Content Include="Views\Places\AfterCreate.cshtml" />
+    <Content Include="Views\Admin\Places.cshtml" />
+    <Content Include="Views\Admin\EditPlace.cshtml" />
+    <Content Include="Views\Profile\AuthInner.cshtml" />
+    <Content Include="Views\Profile\LeftAuth.cshtml" />
+    <Content Include="Views\Admin\PlacesModer.cshtml" />
+    <Content Include="Views\Admin\EditPlaceModer.cshtml" />
+    <Content Include="Views\Admin\Transactions.cshtml" />
+    <Content Include="Views\Home\QstForm.cshtml" />
+    <Content Include="Views\Admin\Qsts.cshtml" />
+    <Content Include="Views\Admin\EditQsts.cshtml" />
+    <Content Include="Views\Home\FaqList.cshtml" />
+    <Content Include="Views\Places\AllPhoto.cshtml" />
+    <Content Include="Views\Admin\Event.cshtml" />
+    <Content Include="Views\Events\Index.cshtml" />
+    <Content Include="Views\Events\EventsSearch.cshtml" />
+    <Content Include="Views\Events\View.cshtml" />
+    <Content Include="Views\Events\EventsSearchDetail.cshtml" />
+    <Content Include="Views\Events\ChangeGo.cshtml" />
+    <Content Include="Views\Events\My.cshtml" />
+    <Content Include="Views\Events\MyIndex.cshtml" />
+    <Content Include="Views\Events\ChangeGoDetails.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\xDB.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>xDB.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\PFBeauSansPro-Bold.eot" />
+    <Content Include="fonts\PFBeauSansPro-Bold.otf" />
+    <Content Include="fonts\PFBeauSansPro-Bold.ttf" />
+    <Content Include="fonts\PFBeauSansPro-Bold.woff" />
+    <Content Include="fonts\PFBeauSansPro-Thin.eot" />
+    <Content Include="fonts\PFBeauSansPro-Thin.otf" />
+    <Content Include="fonts\PFBeauSansPro-Thin.ttf" />
+    <Content Include="fonts\PFBeauSansPro-Thin.woff" />
+    <None Include="Models\xDB.dbml.layout">
+      <DependentUpon>xDB.dbml</DependentUpon>
+    </None>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\MainPage.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>21785</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://sexilove.local</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

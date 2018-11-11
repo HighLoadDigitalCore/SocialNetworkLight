@@ -1,0 +1,88 @@
+﻿@using SexiLove.Extensions
+@model SexiLove.Models.DatingSearch
+<script type="text/javascript">
+    $().ready(function () {
+        if ($('#STID').val()) {
+            $('.city-selected .jq-selectbox__select-text').text($('.city-selected select option[value="' + $('#STID').val() + '"]').text());
+
+        }
+    });
+</script>
+<div id="DateingList">
+    <div class="search" style="border-top:none">
+        @using (Ajax.BeginForm("Search", "Dating", new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "DateingList", OnComplete = "initUIAgain($('#DateingList'));" }))
+        {
+            <input type="hidden" name="TownID" id="STID" value="@Model.TownID" />
+            <div class="row">
+                <div class="search-block search-block-1">
+                    <label for="search-object">Я ищу</label>
+                    <select id="search-object" name="Sex">
+                        <option value="True" @(Model.Sex ? "selected" : "")>Парня</option>
+                        <option value="False" @(!Model.Sex ? "selected" : "")>Девушку</option>
+                    </select>
+                </div>
+                <div class="search-block search-block-2">
+                    <label for="search-target">Для</label>
+                    <select id="search-target" name="Purpose">
+                        <option @(Model.Purpose.IsNullOrEmpty() ? "selected" : "")></option>
+                        <option @(Model.Purpose == "Для брака, семьи" ? "selected" : "") value="Для брака, семьи">Брака, семьи</option>
+                        <option @(Model.Purpose == "Для дружбы" ? "selected" : "") value="Для дружбы">Дружбы</option>
+                        <option @(Model.Purpose == "Для любви, романтических отношений" ? "selected" : "") value="Для любви, романтических отношений">Любви, романтических отношений</option>
+                        <option @(Model.Purpose == "Для секса" ? "selected" : "") value="Для секса">Секса</option>
+                        <option @(Model.Purpose == "Для совместного занятия хобби" ? "selected" : "") value="Для совместного занятия хобби">Совместного занятия хобби</option>
+                        <option @(Model.Purpose == "Для совместного проживания" ? "selected" : "") value="Для совместного проживания">Совместного проживания</option>
+                    </select>
+                </div>
+                <div class="search-block search-block-3">
+                    <label for="search-age-min">В возрасте</label>
+                    <div class="input-range">
+                        <div class="input-range-min">
+                            <input type="text" value="@Model.MinAge" name="MinAge" placeholder="от" id="search-age-min">
+                        </div>
+                        <div class="input-range-max">
+                            <input type="text" value="@Model.MaxAge" name="MaxAge" placeholder="до" id="search-age-max">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="search-block search-block-1">
+                    @Html.CheckBox("HasPhoto", Model.HasPhoto)
+                    <label for="HasPhoto" class="small-label">Только с фото</label>
+                </div>
+                <div class="search-block search-block-2">
+                    @Html.CheckBox("IsOnline", Model.IsOnline)
+                    <label for="IsOnline" class="small-label">Только онлайн</label>
+                </div>
+                <div class="search-block search-block-3"></div>
+                <div class="search-block search-block-1">
+                    <button type="submit" @*onclick="$('#STID').val($('.city-selected select').val())"*@ class="btn btn-blue btn-upper btn-xsmall">Поиск</button>
+                </div>
+            </div>
+        }
+    </div>
+    <ul class="list-unstyled user-list">
+        @if (!Model.Users.Any())
+        {
+            <li class="user-list-item">
+                <b>Никого не найдено</b>
+            </li>
+        }
+        else
+        {
+            foreach (var user in Model.Users)
+            {
+                <li class="user-list-item">
+                    <div class="user-list-item-img"><img src="@user.Avatar?w=80&h=80&mode=crop"></div>
+                    <div class="user-list-item-content">
+                        <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID = user.ID})">@user.UserName @user.UserSurname</a></h4>
+                        <div class="user-list-item-content-age">@user.Age</div>
+                        <div class="user-list-item-content-city">Город: @user.Town.Name</div>
+                    </div>
+                </li>
+
+            }
+        }
+
+    </ul>
+</div>

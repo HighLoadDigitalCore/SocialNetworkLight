@@ -1,0 +1,66 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - " + Model.Name;
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.ContentCSS = "place";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+@model Place
+@if (Model != null)
+{
+    <header class="content-header row">
+        <ol class="list-unstyled breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Places", "Places")">Каталог мест</a></li>
+            <li class="breadcrumb-item"><a href="#">@Model.Name</a></li>
+        </ol>
+        @Html.Action("Account", "Cabinet")
+    </header>
+    <div class="place-left">
+        <div class="place-images">
+            <div class="place-images-big"><img src="@(Model.PlaceImages.Any() ? (Model.PlaceImages.First().Path + "?w=70&h=70") : "")" width="70" height="70"></div>
+
+            @if (Model.PlaceImages.Count > 1)
+            {
+                <div class="place-images-more">
+                    @foreach (var img in Model.PlaceImages.Skip(1))
+                    {
+                        <img src="@img.Path?w=40&h=40">
+                    }
+                </div>
+            }
+
+        @*<div class="place-images-all"><a href="places-photo.html">Все фото</a></div>*@</div>
+        <div class="place-like">
+            <label for="aura">Оценить атмосферу</label>
+            <select name="aura" id="aura">
+                @foreach (var atm in PlacesSearch.AtmoList)
+                {
+                    <option>@atm</option>
+                }
+            </select><a href="#" class="btn btn-green btn-small"><span class="icon icon-like"></span>Мне нравится</a>
+        </div>
+    </div>
+    <div class="place-right">
+        <h2 class="place-title">@(Model.Type) "@Model.Name"</h2>
+        <div><span class="icon icon-place"></span><a href="#" data-title="@Model.Type @Model.Name" class="address">@Model.Adress</a></div>
+        <dl>
+            @if (Model.Metro.IsFilled())
+            {
+                <dt>Метро: </dt>
+                <dd>@Model.Metro</dd>
+            }
+            <dt>Средний чек:</dt>
+            <dd>@((Model.MinPay + Model.MaxPay)/2) руб.</dd>
+            <dt>Рейтинг:</dt>
+            <dd class="rating-value">0</dd>
+        </dl>
+        <p>@Model.Description</p>
+    </div>
+}
+@section sidebar{
+    @Html.Action("LeftMenu", "Cabinet")
+}

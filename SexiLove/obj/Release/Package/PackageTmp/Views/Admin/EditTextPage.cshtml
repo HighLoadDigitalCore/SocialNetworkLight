@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "CityLove - Редактирование страницы";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@model SexiLove.Models.TextPage
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+
+        </li>
+    </ol>
+</header>
+@using (Html.BeginForm("EditTextPage", "Admin", FormMethod.Post, new { @class = "row" }))
+{
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <div>
+        <h3>Название</h3>
+        <input type="text" value="@Model.Name" name="Name" class="@(Model.IsPost && Model.Name.IsNullOrEmpty() ? "err":"")">
+        <h3>URL</h3>
+        <input type="text" disabled="disabled" value="@Model.URL" name="URL" class="@(Model.IsPost && Model.URL.IsNullOrEmpty() ? "err" : "")">
+        <h3>Содержимое</h3>
+        <textarea class="@(Model.IsPost && Model.Text.IsNullOrEmpty() ? "err" : "")" id="Text" name="Text">@Model.Text</textarea>
+
+        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+    </div>
+}
+
+<script type="text/javascript" src="/Content/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+        
+        $().ready(function () {
+
+            if ($('#Text').length) {
+                CKEDITOR.replace('Text', {
+                    filebrowserBrowseUrl: '/Content/ckeditor/ckfinder/ckfinder.html',
+                    filebrowserImageBrowseUrl: '/Content/ckeditor/ckfinder/ckfinder.html?type=Images',
+                    filebrowserFlashBrowseUrl: '/Content/ckeditor/ckfinder/ckfinder.html?type=Flash',
+                    filebrowserUploadUrl: '/Content/ckeditor/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Files',
+                    filebrowserImageUploadUrl: '/Content/ckeditor/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Images',
+                    filebrowserFlashUploadUrl: '/Content/ckeditor/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash'
+                });
+            }
+
+
+        });
+</script>
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

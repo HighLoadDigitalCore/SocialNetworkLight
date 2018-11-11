@@ -1,0 +1,11 @@
+﻿@using SexiLove.Models
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+}
+@if (currentUser.ID > 0)
+{
+    <ul class="list-unstyled buttons">
+        <li class="buttons-item purse"><a href="@Url.Action("Buy", "Cabinet")">Счет</a></li>
+        <li class="buttons-item setting"><a href="@Url.Action("Settings", "Cabinet")">Настройки</a></li>
+    </ul>
+}

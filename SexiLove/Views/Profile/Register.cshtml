@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "CityLove - Регистрация";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+@using SexiLove.Extensions
+@model SexiLove.Models.RegisterModel
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Регистрация пользователя</a></li>
+    </ol>
+</header>
+<div id="RegForm">
+    @using (Html.BeginForm("Register", "Profile", FormMethod.Post, new { @class = "row", enctype = "multipart/form-data" }))
+    {
+        <div class="content-column-1">
+            <label for="Email">Электронная почта</label>
+            <input type="email" class="@(Model.IsPost && (Model.Email.IsEmpty() || !Model.Email.IsMailAdress()) ? "err":"")" id="reg-email" placeholder="Пример: name@mail.ru" name="Email" value="@Model.Email">
+            <label for="UserName">Ваше полное имя</label>
+            <input type="text" class="@(Model.IsPost && Model.UserName.IsNullOrEmpty() ? "err":"")" id="reg-name" placeholder="Пример: Елена Иванова" name="UserName" value="@Model.UserName">
+            <div class="@(Model.IsPost && !Model.Town.HasValue ? "err":"")">
+                <label for="Town">Где вы находитесь?</label>
+                <select name="Town" id="Town">
+                    <option value="">Выберите город</option>
+                    @Html.Action("TownList", "Home", new { townID = Model.Town ?? 0 })
+                </select>
+            </div>
+            <label for="Password">Пароль</label>
+            <input type="password" name="Password" class="@(Model.IsPost && Model.Password.IsNullOrEmpty()  ? "err":"")" id="reg-password" value="@Model.Password">
+            <div @*class="@(Model.IsPost && Model.Photo.IsNullOrEmpty() ? "err" : "")"*@>
+                <label for="reg-photo">Добавить фото</label>
+                <input type="file" name="Photo" id="reg-photo" class="download-img">
+            </div>
+            <label for="reg-date-day">Дата рождения:</label>
+            <div class="row">
+                <div class="select-date">
+                    <div class="select-date-day @(Model.IsPost && !Model.Day.HasValue ? "err":"")">
+                        <select name="Day" id="reg-date-day">
+                            <option value="">День</option>
+                            @for (int i = 1; i <= 31; i++)
+                            {
+                                <option value="@i" @(Model.Day == i ? "selected" : "")>@i</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="select-date-month @(Model.IsPost && !Model.Month.HasValue ? "err":"")">
+                        <select name="Month">
+                            <option value="">Месяц</option>
+                            <option value="1" @(Model.Month == 1 ? "selected" : "")>Январь</option>
+                            <option value="2" @(Model.Month == 2 ? "selected" : "")>Февраль</option>
+                            <option value="3" @(Model.Month == 3 ? "selected" : "")>Март</option>
+                            <option value="4" @(Model.Month == 4 ? "selected" : "")>Апрель</option>
+                            <option value="5" @(Model.Month == 5 ? "selected" : "")>Май</option>
+                            <option value="6" @(Model.Month == 6 ? "selected" : "")>Июнь</option>
+                            <option value="7" @(Model.Month == 7 ? "selected" : "")>Июль</option>
+                            <option value="8" @(Model.Month == 8 ? "selected" : "")>Август</option>
+                            <option value="9" @(Model.Month == 9 ? "selected" : "")>Сентябрь</option>
+                            <option value="10" @(Model.Month == 10 ? "selected" : "")>Октябрь</option>
+                            <option value="11" @(Model.Month == 11 ? "selected" : "")>Ноябрь</option>
+                            <option value="12" @(Model.Month == 12 ? "selected" : "")>Декабрь</option>
+                        </select>
+                    </div>
+                    <div class="select-date-year @(Model.IsPost && !Model.Year.HasValue ? "err":"")">
+                        <select name="Year">
+                            <option value="">Год</option>
+                            @for (int i = DateTime.Now.Year - 18; i >= DateTime.Now.Year - 60; i--)
+                            {
+                                <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <label for="reg-sex">Пол</label>
+            <select name="Sex" id="reg-sex">
+                <option value="True" @(Model.Sex ? "selected" : "")>Мужской</option>
+                <option value="False" @(!Model.Sex ? "selected" : "")>Женский</option>
+            </select>
+            <button type="submit" class="btn btn-green btn-upper btn-small">Зарегистрироваться</button>
+            <div class="row">
+                <div class="contract">
+                    <div class="contract-text">Продолжая, вы соглашаетесь с условиями</div><a href="#" class="contract-link">Соглашения о предоставлении услуг</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section sidebar
+{
+    @Html.Action("LeftAuth")
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>SimpleMembershipProvider_and_SimpleRoleProvider-Enabler_for_MVC4</id>
+    <version>1.0.1</version>
+    <authors>SIAM.IO</authors>
+    <owners>SIAM.IO</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Enable SimpleMembershipProiver+SimpleRoleProvider for MVC4</description>
+    <releaseNotes>Initial Release.</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags>SimpleMembershipProvider SimpleRoleProvider Web.config MVC4</tags>
+  </metadata>
+</package>

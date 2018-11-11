@@ -1,0 +1,195 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@model SexiLove.Models.EventsSearch
+@{
+    var ev = (Event)ViewBag.Event;
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    var friendsList = new xDBDataContext().Friends.Where(
+        x => x.IsRead && (x.FromUserID == currentUser.ID || x.ToUserID == currentUser.ID) && x.Status == 1).ToList();
+    var friends = friendsList.Select(x => x.GetUserID(currentUser)).ToList();
+
+}
+<script type="text/javascript">
+    $().ready(function () {
+        if ($('#STID').val()) {
+            $('.city-selected .jq-selectbox__select-text').text($('.city-selected select option[value="' + $('#STID').val() + '"]').text());
+
+        }
+    });
+
+    function setfocus(arg) {
+        $('input[name="' + arg + '"]').pickmeup('show');;
+        return false;
+    }
+    function changeBtnGo(arg) {
+        $.post('/Events/ChangeGoDetails', { ID: arg, Type: 1 }, function (d) {
+            $('#dt').replaceWith(d);
+        });
+    }
+    function changeBtnSearch(arg) {
+        $.post('/Events/ChangeGoDetails', { ID: arg, Type: 0 }, function (d) {
+            $('#dt').replaceWith(d);
+        });
+    }
+
+    function changeBtnInvite(evID, userid, type, obj) {
+        $.post('/Events/Invite', { ID: evID, UserID: userid, Type: type }, function() {
+            $(obj).parent().remove();
+        });
+    }
+</script>
+<div id="DateingList">
+    @if (Model.Cats != null)
+    {
+        <div class="event-towns">
+            @foreach (var cat in Model.Cats)
+            {
+                <a class="@(HttpContext.Current.Request["cat"] == cat.ExportURL ? "active" : "")" href="@Url.Action("Index", new {cat = cat.ExportURL})">@cat.Name</a>
+            }
+        </div>
+    }
+    <div class="event-head">Список мероприятий</div>
+
+
+    <div class="search row search-event">
+        @using (Ajax.BeginForm("EventsSearchDetail", "Events", new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "DateingList", OnComplete = "initUIAgain($('#DateingList'));" }))
+        {
+            <input type="hidden" name="TownID" id="STID" value="@Model.TownID" />
+            <div class="row">
+
+                <input type="text" name="Name" value="@Model.Name" placeholder="Поиск мероприятий" class="event-name-search" />
+
+                <div class="search-block search-block-4" style="width: 320px">
+                    <label for="search-date-min">Дата</label>
+                    <div class="input-range">
+                        <div class="input-range-min" style="width: 150px">
+                            <input type="text" name="MinDate" arg="date" value="@(Model.MinDate.HasValue ? Model.MinDate.Value.ToString("dd.MM.yyyy"):"")" placeholder="с" id="search-date-min" style="float: left;width: 105px; margin-right: 5px">
+                            <a class="calendar" href="#" onclick="setfocus('MinDate'); return false;"></a>
+                        </div>
+                        <div class="input-range-max" style="width: 150px">
+                            <input type="text" name="MaxDate" arg="date" value="@(Model.MaxDate.HasValue ? Model.MaxDate.Value.ToString("dd.MM.yyyy"):"")" placeholder="по" id="search-date-max" style="float: left;width: 105px; margin-right: 5px; margin-left: 5px">
+                            <a class="calendar" href="#" onclick="setfocus('MaxDate'); return false;"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-block search-block-4" style="width: 280px">
+                    <button type="submit" class="btn btn-blue btn-upper btn-xsmall" style="margin-top: 32px; float: right">Поиск</button>
+                </div>
+            </div>
+        }
+    </div>
+    @if (ev != null)
+    {
+        <div id="dt">
+            @{ var list = new List<Event>() { ev }; }
+            @foreach (var meet in list)
+            {
+                var iamgo = meet.EventPeoples.Any(x => x.FromUserID == currentUser.ID && x.Status == 1 && x.Type == 1) || meet.EventPeoples.Any(x => x.ToUserID == currentUser.ID && x.Status == 1 && x.Type == 1);
+                var iamsearch = meet.EventPeoples.Any(x => x.FromUserID == currentUser.ID && x.Status == 1 && x.Type == 0) || meet.EventPeoples.Any(x => x.ToUserID == currentUser.ID && x.Status == 1 && x.Type == 0);
+
+                <ul class="list-unstyled event-list">
+
+
+                    <li class="event-list-item" arg="@meet.ID">
+                        <div class="event-name"><a href="@Url.Action("View", "Events", new { ID = meet.ID })" title="@meet.Name">@Html.Raw(meet.Name)</a></div>
+                        <div class="event-date">@meet.StartDate.Value.ToString("d MMMM yyyy")</div>
+                        <div class="event-list-item-img">
+                            @if (iamgo)
+                            {
+                                <div class="i-am-go"></div>
+                            }
+                            <a href="@Url.Action("View", "Events", new { ID = meet.ID })"><img src="@meet.Photo?w=200&h=200&mode=crop"></a>
+                        </div>
+
+                        <div class="event-list-item-content">
+                            <div class="line">
+                                <span>Идут:</span>@meet.EventPeoples.Count(x => x.Status == 1 && x.Type == 1) человек
+                            </div>
+                            <div class="line">
+                                <span>Ваших друзей:</span>@meet.EventPeoples.Count(x => x.Status == 1 && (friends.Contains(x.ToUserID ?? 0) || friends.Contains(x.FromUserID))) человек
+                            </div>
+                            <div class="line">
+                                <span>Ищут с кем пойти:</span>@meet.EventPeoples.Count(x => x.Status == 1 && x.Type == 0) человек
+                            </div>
+                        </div>
+                        @if (currentUser.ID > 0)
+                        {
+                            if (iamgo)
+                            {
+                                <a id="btnGo" href="#" onclick="changeBtnGo(@meet.ID); return false;" class=" btn btn-blue btn-upper btn-xsmall btn-go">Я не иду</a>
+                            }
+                            else if (iamsearch)
+                            {
+                                <a id="btnSearch" href="#" onclick="changeBtnSearch(@meet.ID); return false;" class=" btn btn-blue btn-upper btn-xsmall btn-go">Уже не ищу</a>
+                            }
+                            else
+                            {
+                                <a id="btnGo" href="#" onclick="changeBtnGo(@meet.ID); return false;" class=" btn btn-green btn-upper btn-xsmall btn-go">Я иду</a>
+                                <a id="btnSearch" href="#" onclick="changeBtnSearch(@meet.ID); return false;" class=" btn btn-green btn-upper btn-xsmall btn-go">Я ищу компанию</a>
+                            }
+                        }
+
+                    </li>
+
+
+
+                </ul>
+
+                if (!iamgo && !iamsearch)
+                {
+                    <div class="event-full-text">
+                        @Html.Raw(meet.FullDescr.IsFilled() ? meet.FullDescr : meet.ShortDescr)
+                    </div>
+                }
+                if (iamgo)
+                {
+                    <div class="event-full-text">
+                        <div class="friend-list">
+
+                            @foreach (Friend fr in friendsList)
+                            {
+                                if (!fr.IsAlreadyInvitedForEvent(currentUser, meet))
+                                {
+                                    <div class="fr-line">
+                                        <img src="@fr.GetAvatar(currentUser)?w=22&h=22&mode=crop" />
+                                        <a href="@Url.Action("Index", "Cabinet", new{ID= fr.GetUserID(currentUser)})">@fr.GetFriendName(currentUser)</a>
+                                        <a id="btnInvite" href="#" onclick="changeBtnInvite(@meet.ID, @fr.GetUserID(currentUser), 1, this); return false;" class=" btn btn-green btn-upper btn-xsmall btn-go">Предложить пойти</a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                if (iamsearch)
+                {
+                    var searchList = new xDBDataContext().EventPeoples.Where(x => x.EventID == meet.ID && x.ToUserID == null && x.FromUserID != currentUser.ID && x.Type == 0 && x.Status == 1);
+                    <div class="event-full-text">
+                        <div class="friend-list">
+                            @foreach (var fr in searchList)
+                            {
+                                if (!fr.IsAlreadyInvitedForEvent(currentUser))
+                                {
+                                    <div class="fr-line">
+                                        <img src="@fr.GetAvatar(currentUser)?w=22&h=22&mode=crop" />
+                                        <a href="@Url.Action("Index", "Cabinet", new {id = fr.GetUserID(currentUser)})">@fr.GetName(currentUser)</a>
+                                        <a id="btnInvite" href="#" onclick="changeBtnInvite(@meet.ID, @fr.GetUserID(currentUser), 0, this); return false; " class="btn btn-green btn-upper btn-xsmall btn-go">Предложить пойти</a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+
+    }
+    @if (ViewBag.Redirect != null)
+    {
+        <script type="text/javascript">
+            $().ready(function () {
+                document.location.href = '@(ViewBag.Redirect)';
+            });
+        </script>
+    }
+</div>

@@ -1,0 +1,38 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Предложить место";
+    ViewBag.ContentCSS = "";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+@model Place
+
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Places", "Places")">Каталог мест</a></li>
+        <li class="breadcrumb-item"><a href="#">Предложить место</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+<div class="">
+    <h2>Ваше место успешно добавлено в каталог. <br /><br />
+    @if (Model.AdminMail.IsFilled())
+    {
+        @Html.Raw("После проверки модератором вашего сообщения, вам на почту придет уведомление с регистрационными данными вашей страницы")
+        
+    }
+    else
+    {
+        @Html.Raw("После модерации оно станет доступно на сайте.")
+    }
+    </h2>
+</div>
+
+@section sidebar{
+    @Html.Action("LeftMenu", "Cabinet")
+}

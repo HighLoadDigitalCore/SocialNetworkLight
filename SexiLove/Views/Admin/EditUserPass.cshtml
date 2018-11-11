@@ -1,0 +1,35 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Редактирование пароля";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            
+        </li>
+    </ol>
+</header>
+@using (Html.BeginForm("EditUserPass", "Admin", FormMethod.Post, new { @class = "row" }))
+{
+    <input type="hidden" name="ID" value="@ViewBag.ID" />
+    <div class="content-column-1">
+        <h3>Новый пароль</h3>
+        <input type="text" name="Password" />
+        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+    </div>
+}
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

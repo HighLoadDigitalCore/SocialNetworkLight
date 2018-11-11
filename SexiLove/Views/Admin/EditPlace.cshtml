@@ -1,0 +1,129 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.Title = "CityLove - Редактирование страницы";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = currentUser.ID>0 ? "sidebar-reg":"";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model SexiLove.Models.Place
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            Редактирование места
+        </li>
+    </ol>
+</header>
+@using (Html.BeginForm("EditPlace", "Admin", FormMethod.Post, new { @class = "row", enctype = "multipart/form-data" }))
+{
+    if (((string)ViewBag.Message).IsFilled())
+    {
+        <h1>@ViewBag.Message</h1>
+    }
+
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <div>
+        <h3>Название</h3>
+        <input type="text" class="@(Model.IsPost && Model.Name.IsEmpty() ? "err":"")" value="@Model.Name" name="Name">
+
+        <h3>Хочу быть администратором страницы</h3>
+        @Html.CheckBox("WishToBeAdmin", Model.WishToBeAdmin || Model.AdminMail.IsMailAdress(), new { onchange = "$('#adminMailCell').toggle();" })
+        <div id="adminMailCell" style="@(Model.WishToBeAdmin || Model.AdminMail.IsMailAdress() ? "" : "display:none")">
+            <h3>Е-mail адмнистратора</h3>
+            <input type="text" class="@(Model.IsPost && Model.AdminMail.IsEmpty() && Model.WishToBeAdmin ? "err":"")" value="@Model.AdminMail" name="AdminMail">
+            @if (Model.IsPost && Model.AdminMail.IsEmpty() && Model.WishToBeAdmin)
+            {
+                <span>Пожалуйста, корректно заполните поле e-mail или уберите галочку с &laquo;Хочу быть администратором места&raquo;</span>
+            }
+        </div>
+
+        <h3>Тип заведения</h3>
+        <select name="Type" class="@(Model.IsPost && Model.Type.IsEmpty() ? "err":"")">
+            <option @(Model.Type.IsNullOrEmpty() ? "selected" : "") value=""></option>
+            <option @(Model.Type == "Кафе" ? "selected" : "") value="Кафе">Кафе</option>
+            <option @(Model.Type == "Ресторан" ? "selected" : "") value="Ресторан">Ресторан</option>
+            <option @(Model.Type == "Каток" ? "selected" : "") value="Каток">Каток</option>
+        </select>
+        <h3>Город</h3>
+        <select name="TownID" class="@(Model.IsPost && Model.TownID == 0 ? "err":"")">
+            @Html.Action("TownList", "Home", new { townID = Model.TownID })
+        </select>
+        @*<input type="text" name="Town" value="@Model.Town" class="@(Model.IsPost && Model.Town.IsEmpty() ? "err":"")">*@
+        <h3>Адрес</h3>
+        <input type="text" value="@Model.Adress" name="Adress" class="@(Model.IsPost && Model.Adress.IsEmpty() ? "err":"")">
+        <h3>Ближайшее метро</h3>
+        <input type="text" value="@Model.Metro" name="Metro">
+        <h3>Средний чек</h3>
+        <div class="row">
+            <div class="select-range small">
+                <div class="select-range-min">
+                    <input type="text" value="@Model.MinPay" name="MinPay" class="@(Model.IsPost && !Model.MinPay.HasValue ? "err":"")" />
+                </div>
+                <div class="select-range-max">
+                    <input type="text" value="@Model.MaxPay" name="MaxPay" class="@(Model.IsPost && !Model.MaxPay.HasValue ? "err":"")" />
+                </div>
+            </div>
+        </div>
+
+        <h3>Описание</h3>
+        <textarea class="@(Model.IsPost && Model.Description.IsEmpty() ? "err":"")" name="Description" id="Description">@Model.Description</textarea>
+
+
+        <h3>Загрузить логотип</h3>
+        @if (Model.Logo.IsFilled())
+        {
+            <img src="@Model.Logo" style="max-height: 70px" />
+        }
+        <input type="file" name="Logo" class="@(Model.IsPost && Model.Adress.IsEmpty() ? "err":"")">
+        <h3>Фотографии места</h3>
+        @if (Model.PlaceImages.Any())
+        {
+            <div style="height:110px; clear: both; overflow: hidden">
+                @foreach (var placeImage in Model.PlaceImages)
+                {
+
+                <div class="place-img" style="width: 100px; float: left; overflow: hidden">
+                    <img src="@placeImage.Path" style="max-height: 70px" />
+                    <a href="@Url.Action("PlaceImageDelete", new{ID = placeImage.ID})">удалить</a>
+                </div>
+
+                }
+            </div>
+        }
+        <input type="file" name="Image" class="@(Model.IsPost && Model.Image.IsEmpty() ? "err":"")">
+        <button type="submit" name="Save" value="Save" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+        @if (Model.ID > 0)
+        {
+            <button type="submit" name="Submit" value="Submit" style="margin-right: 30px" class="btn btn-green btn-upper btn-small pull-right">@Html.Raw(Model.Approved ? "Заблокировать" : "Утвердить")</button>
+        }
+    </div>
+}
+
+<script type="text/javascript" src="/Content/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+
+    $().ready(function () {
+
+        if ($('#Description').length) {
+            CKEDITOR.replace('Description', {
+                filebrowserBrowseUrl: '/Content/ckeditor/ckfinder/ckfinder.html',
+                filebrowserImageBrowseUrl: '/Content/ckeditor/ckfinder/ckfinder.html?type=Images',
+                filebrowserFlashBrowseUrl: '/Content/ckeditor/ckfinder/ckfinder.html?type=Flash',
+                filebrowserUploadUrl: '/Content/ckeditor/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Files',
+                filebrowserImageUploadUrl: '/Content/ckeditor/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Images',
+                filebrowserFlashUploadUrl: '/Content/ckeditor/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash'
+            });
+        }
+
+
+    });
+</script>
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

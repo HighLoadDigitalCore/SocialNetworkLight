@@ -1,0 +1,52 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+    ViewBag.Title = "CityLove - Редактирование страницы";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model FAQ
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+
+        </li>
+    </ol>
+</header>
+@using (Html.BeginForm("EditQsts", "Admin", FormMethod.Post, new { @class = "row" }))
+{
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <input type="hidden" name="UserID" value="@Model.UserID" />
+    <div>
+        <h3>Вопрос</h3>
+        <textarea class="@(Model.IsPost && Model.Qst.IsNullOrEmpty() ? "err":"")" name="Qst">@Model.Qst</textarea>
+        
+        <h3>Ответ</h3>
+        <textarea class="@(Model.IsPost && Model.Ans.IsNullOrEmpty() ? "err":"")" name="Ans">@Model.Ans</textarea>
+        <h3>Отображать на сайте</h3>
+        @Html.CheckBox("Visible", Model.Visible)
+        <h3>Дата создания</h3>
+        <input name="CreateDate" type="text" value="@Model.CreateDate.ToString("dd.MM.yyyy")" arg="date" />
+        @if (Model.ID > 0)
+        {
+            <h3>Автор</h3>
+            <input type="text" disabled="disabled" value="@(Model.UserID.HasValue ? Model.User.NameAndSurname : "Неавторизованный пользователь")"/>
+        }
+        else
+        {
+            
+        }
+        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Сохранить</button>
+    </div>
+}
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

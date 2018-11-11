@@ -1,0 +1,65 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Список мест";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model IList<SexiLove.Models.Place>
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            <a style="font-weight: bold" href="@Url.Action("EditPlace")">Добавить место</a>
+        </li>
+    </ol>
+</header>
+<table width="100%" class="tbl">
+    <tr>
+        <th>Название</th>
+        <th>Статус</th>
+        <th>Модераторы</th>
+        <th></th>
+    </tr>
+    @foreach (var town in Model)
+    {
+        <tr>
+            <td>
+                <a href="@Url.Action("EditPlace", "Admin", new{ ID = town.ID })">@town.Name</a>
+            </td>
+            <td>
+                @Html.Raw(town.Approved ? "Отображается на сайте" :"На утверждении")
+            </td>
+            <td>
+                @if (town.PlaceAdmins.Any())
+                {
+                    foreach (var admin in town.PlaceAdmins)
+                    {
+                        <a href="@Url.Action("EditUser", new {ID = admin.ID})">@(admin.User.NameAndSurname.IsFilled() ? admin.User.NameAndSurname : admin.User.Email)</a>
+                    }
+
+                }
+                else
+                {
+                    @Html.Raw("---")
+                }
+                
+            </td>
+            <td>
+                <a href="@Url.Action("DeletePlace", "Admin", new { ID = town.ID })">удалить</a>
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

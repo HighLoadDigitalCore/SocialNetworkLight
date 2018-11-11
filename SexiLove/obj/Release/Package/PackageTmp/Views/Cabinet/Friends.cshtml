@@ -1,0 +1,115 @@
+﻿@using SexiLove.Models
+@model SexiLove.Models.Friendship
+@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+}
+@if (currentUser.ID > 0)
+{
+    <div id="FriendForm">
+        <div class="tabs tabs-friend">
+            <ul class="list-unstyled row">
+                <li class="column third"><a href="#tabs-1" arg="col1">Список друзей</a></li>
+                <li class="column third"><a href="#tabs-2" arg="col2">Заявки в друзья</a></li>
+                <li class="column third"><a href="#tabs-3" arg="col3">Отправленные заявки</a></li>
+            </ul>
+            <div id="tabs-1" style="display: none">
+                <h3>Список моих друзей <span class="color-blue">@Model.FriendCount</span></h3>
+                @using (Ajax.BeginForm("Friends", "Cabinet", new { }, new AjaxOptions() { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "FriendForm", OnComplete = "initFriendTab();" }, new { id = "FF0" }))
+                {
+                    <div class="input-search">
+                        <input type="text" name="Search" placeholder="Поиск друзей" value="@Model.Search">
+                        <button type="submit"><span class="icon icon-search"></span></button>
+                    </div>
+                    <input name="Order" value="0" id="Order1" type="hidden" />
+                    <a href="#" class="content-link @(Model.Order == 0 ? "active" : "")" onclick=" $('#Order1').val('0'); $('#FF0').submit(); ">Новые</a>
+                    <a href="#" class="content-link @(Model.Order == 1 ? "active" : "")" onclick=" $('#Order1').val('1'); $('#FF0').submit(); ">По алфавиту</a>
+
+                }
+                <ul class="list-unstyled user-list">
+                    @foreach (var user in Model.Friends)
+                    {
+                        <li class="user-list-item">
+                            <div class="user-list-item-img"><img src="@user.GetAvatar(currentUser)?w=80&h=80"></div>
+                            <div class="user-list-item-content">
+                                <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID= user.GetUserID(currentUser)})">@user.GetFriendName(currentUser)</a></h4>
+                                <div class="user-list-item-content-age">@user.GetAge(currentUser)</div>
+                                <div class="user-list-item-content-city">Город: @user.GetTown(currentUser)</div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div id="tabs-2" style="display: none">
+                <h3>
+                    Заявки в друзья (@Model.FriendInvitesIncomeCount) @if (Model.FriendInvitesIncomeCountNew > 0)
+                    {
+                        <span class="color-blue">+@Model.FriendInvitesIncomeCountNew</span>
+                    }
+                </h3>
+                @using (Ajax.BeginForm("Friends", "Cabinet", new { }, new AjaxOptions() { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "FriendForm", OnComplete = "initFriendTab();" }, new { id = "FF1" }))
+                {
+                    <div class="input-search">
+                        <input type="text" name="Search" placeholder="Поиск друзей" value="@Model.Search">
+                        <button type="submit"><span class="icon icon-search"></span></button>
+                    </div>
+                    <input name="Order" value="0" id="Order2" type="hidden" />
+                    <a href="#" class="content-link @(Model.Order == 0 ? "active" : "")" onclick=" $('#Order2').val('0'); $('#FF1').submit(); ">Новые</a>
+                    <a href="#" class="content-link @(Model.Order == 1 ? "active" : "")" onclick=" $('#Order2').val('1'); $('#FF1').submit(); ">По алфавиту</a>
+
+                }
+                <ul class="list-unstyled user-list">
+                    @foreach (var user in Model.FriendInvitesIncome)
+                    {
+                        <li class="user-list-item">
+                            <div class="user-list-item-img"><img src="@user.GetAvatar(currentUser)?w=80&h=80"></div>
+                            <div class="user-list-item-content">
+                                <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID= user.GetUserID(currentUser)})">@user.GetFriendName(currentUser)</a></h4>
+                                <div class="user-list-item-content-age">@user.GetAge(currentUser)</div>
+
+                            </div>
+                            <div class="user-list-item-info">
+                                <div>Отправил(а) @user.CreateDate.ToString("d MMMMM в HH:mm")</div>
+                                <div class="status status-no"><span class="icon icon-status icon-status-no"></span><a href="@Url.Action("FriendAccept", "Cabinet", new{ID=user.ID, Target = -1})">Отклонить заявку</a></div>
+                                <div class="status status-yes"><span class="icon icon-status icon-status-yes"></span><a href="@Url.Action("FriendAccept", "Cabinet", new{ID=user.ID, Target = 1})">Принять заявку</a></div>
+                            </div>
+
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div id="tabs-3" style="display: none">
+                <h3>Отправленные заявки</h3>
+                @using (Ajax.BeginForm("Friends", "Cabinet", new { }, new AjaxOptions() { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "FriendForm", OnComplete = "initFriendTab();" }, new { id = "FF2" }))
+                {
+                    <div class="input-search">
+                        <input type="text" name="Search" placeholder="Поиск друзей" value="@Model.Search">
+                        <button type="submit"><span class="icon icon-search"></span></button>
+                    </div>
+                    <input name="Order" value="0" id="Order3" type="hidden" />
+                    <a href="#" class="content-link @(Model.Order == 0 ? "active" : "")" onclick=" $('#Order3').val('0'); $('#FF2').submit(); ">Новые</a>
+                    <a href="#" class="content-link @(Model.Order == 1 ? "active" : "")" onclick=" $('#Order3').val('1'); $('#FF2').submit(); ">По алфавиту</a>
+                }
+                <ul class="list-unstyled user-list">
+                    @foreach (var user in Model.FriendInvitesOutcome)
+                    {
+                        <li class="user-list-item">
+                            <div class="user-list-item-img"><img src="@user.GetAvatar(currentUser)?w=80&h=80"></div>
+                            <div class="user-list-item-content">
+                                <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID= user.GetUserID(currentUser)})">@user.GetFriendName(currentUser)</a></h4>
+                                <div class="user-list-item-content-age">@user.GetAge(currentUser)</div>
+                               
+
+                            </div>
+                            <div class="user-list-item-info">
+                                <div>Отправил(а) @user.CreateDate.ToString("d MMMMM в HH:mm")</div>
+                                <div class="status status-@(user.Status == -1 ? "no" : (user.Status == 0 ? "waiting" : "yes"))"><span class="icon icon-status icon-status-@(user.Status == -1 ? "no" : (user.Status == 0 ? "waiting" : "yes"))"></span>Заявка @(user.Status == -1 ? "отклонена" : (user.Status == 0 ? "в ожидании" : "принята"))</div>
+                            </div>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+}

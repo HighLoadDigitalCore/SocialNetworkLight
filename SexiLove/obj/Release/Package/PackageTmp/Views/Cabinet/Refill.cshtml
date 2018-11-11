@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "CityLove - Пополнение счета";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+
+}
+@using System.Linq
+@using System.Web.UI.WebControls
+@model SexiLove.Models.User
+<div class="row">
+    <header class="content-header row">
+        <ol class="list-unstyled breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Личный кабинет</a></li>
+            <li class="breadcrumb-item"><a href="#">Пополнение счета</a></li>
+        </ol>
+        @Html.Action("Account", "Cabinet")
+    </header>
+</div>
+
+<div class="content-form content-form-2 row">
+    <div class="content-form-left">
+        @using (Html.BeginForm("Refill", "Cabinet", FormMethod.Post))
+        {
+
+            <h2>Пополнить счет</h2>
+
+            <input type="text" class="@(((bool?)ViewBag.Error??false) ? "err":"")" name="Sum" required="1" />
+
+            <button class="btn btn-green btn-upper btn-small pull-right" type="submit">Пополнить счет</button>
+
+        }
+    </div>
+    <div class="content-form-right">
+        <h3>У вас на счету:</h3>
+        <div class="credit"><strong>@(Model.Balance)<br></strong>баллов</div>
+    </div>
+</div>
+
+@section sidebar
+{
+    @Html.Action("LeftMenu")
+}

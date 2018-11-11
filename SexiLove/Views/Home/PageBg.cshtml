@@ -1,0 +1,9 @@
+﻿@model SexiLove.Models.User
+@if (Model!=null && Model.IsVip)
+{
+    @Html.Raw("bg-vip")
+}
+else
+{
+    @Html.Raw("bg-light")
+}

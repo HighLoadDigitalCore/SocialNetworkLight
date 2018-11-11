@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "CityLove - Список пользователей";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@model IList<SexiLove.Models.User>
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            @*<a style="font-weight: bold" href="@Url.Action("EditTown")">Добавить город</a>*@
+        </li>
+    </ol>
+</header>
+<table width="100%" class="tbl">
+    <tr>
+        <th>Имя</th>
+        <th>E-mail</th>
+        <th></th>
+        <th></th>
+    </tr>
+    @foreach (var town in Model)
+    {
+        <tr>
+            <td>
+                <a href="@Url.Action("EditUser", "Admin", new{ ID = town.ID })">@(town.NameAndSurname.IsNullOrEmpty() ? town.Email : town.NameAndSurname)</a>
+            </td>
+            <td>
+                @town.Email
+            </td>
+            <td>
+                <a href="@Url.Action("EditUserPass", "Admin", new { ID = town.ID })">изменить пароль</a>
+            </td>
+            <td>
+                <a href="@Url.Action("AuthUser", "Admin", new { ID = town.ID })">войти</a>
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

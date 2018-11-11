@@ -1,0 +1,50 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Список транзакций";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    ViewBag.ContentCSS = "";
+
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model User
+<header class="content-header row">
+    <span class="icon icon-reg"></span>
+    <ol class="list-unstyled breadcrumb" style="width: auto">
+        <li style="float: right">
+            @*<a style="font-weight: bold" href="@Url.Action("EditTown")">Добавить город</a>*@
+        </li>
+    </ol>
+</header>
+<table width="100%" class="tbl">
+    <tr>
+        <th>Номер</th>
+        <th>Дата</th>
+        <th>Сумма</th>
+        <th>Статус</th>
+        <th>Описание</th>
+    </tr>
+    @if (Model != null)
+    {
+        foreach (var town in Model.MoneyTransactions)
+        {
+            <tr>
+                <td>@town.ID.ToString("d8")</td>
+                <td>@town.Date.ToString("d MMMMM yyyy, HH:mm:ss")</td>
+                <td>@town.Sum</td>
+                <td>@(town.Status == 1 ? "Обработана" : "Отменена")</td>
+                <td>@town.Description</td>
+            </tr>
+        }
+    }
+</table>
+
+
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

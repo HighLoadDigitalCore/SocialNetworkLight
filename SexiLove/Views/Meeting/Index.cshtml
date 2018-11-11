@@ -1,0 +1,40 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Каталог встреч";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index")">Каталог встреч</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+
+
+@if (currentUser.ID > 0)
+{
+
+    <div class="row text-center"><a href="@Url.Action("Create", "Meeting")" class="btn btn-green btn-upper btn-small">Создать встречу</a></div>
+}
+<div class="content-links row"><a href="@Url.Action("Index", "Meeting")" class="content-link @(Request["detailed"].IsNullOrEmpty() ? "active" : "")">Быстрый поиск</a><a href="@Url.Action("Index", "Meeting", new{detailed=1})" class="content-link @(Request["detailed"].IsFilled() ? "active" : "")">Расширенный поиск</a></div>
+
+@if (Request["detailed"].IsNullOrEmpty())
+{
+    @Html.Action("ShortSearch")
+}
+else
+{
+    @Html.Action("FullSearch")
+}
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

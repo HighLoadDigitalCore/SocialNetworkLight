@@ -1,0 +1,80 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    ViewBag.Title = "CityLove - Cообщения";
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.ContentCSS = "";
+    ViewBag.SidebarCSS = "sidebar-reg";
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+}
+
+@model IList<Message>
+@{
+    var income = Model.Where(x => x.ToUserID == currentUser.ID).OrderByDescending(x => x.CreateDate);
+    var outcome = Model.Where(x => x.FromUserID == currentUser.ID).OrderByDescending(x => x.CreateDate);
+}
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Cabinet")">Личный кабинет</a></li>
+        <li class="breadcrumb-item"><a href="#">Мои сообщения</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+<div class="tabs">
+    <ul class="list-unstyled row">
+        <li class="column half"><a href="#tabs-1">Входящие</a></li>
+        <li class="column half"><a href="#tabs-2">Отправленные</a></li>
+    </ul>
+    <div id="tabs-1" style="display: none">
+        <a arg="all" href="#" rel="message-switch" class="content-link active">Все</a><a href="#" arg="notread" class="content-link" rel="message-switch">Непрочитанные</a>
+        <ul class="list-unstyled user-list">
+            @foreach (var msg in income)
+            {
+                <li class="user-list-item" read="@(msg.IsRead?1:0)">
+                    <div class="user-list-item-img"><img src="@msg.FromUser.Avatar?w=80&h=80" /></div>
+                    <div class="user-list-item-content long">
+                        <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID = msg.FromUserID})">@msg.FromUser.NameAndSurname</a></h4>
+                        <div class="user-list-item-content-age">@msg.FromUser.Age</div>
+                        <div class="comment">@msg.Text.ClearHTML()</div>
+                        <div class="close" rel="msg-del" arg="@msg.ID">Удалить</div>
+                    </div>
+                </li>
+            }
+            @if (!income.Any())
+            {
+                <li class="user-list-item noms">
+                    <b>У вас нет входящий сообщений</b>
+                </li>
+            }
+        </ul>
+    </div>
+    <div id="tabs-2" style="display: none">
+        <a arg="all" href="#" rel="message-switch" class="content-link active">Все</a><a href="#" arg="notread" class="content-link" rel="message-switch">Непрочитанные</a>
+        <ul class="list-unstyled user-list">
+            @foreach (var msg in outcome)
+            {
+                <li class="user-list-item" read="@(msg.IsRead?1:0)">
+                    <div class="user-list-item-img"><img src="@msg.ToUser.Avatar?w=80&h=80" /></div>
+                    <div class="user-list-item-content long">
+                        <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new{ID = msg.ToUserID})">@msg.ToUser.NameAndSurname</a></h4>
+                        <div class="user-list-item-content-age">@msg.ToUser.Age</div>
+                        <div class="comment">@msg.Text.ClearHTML()</div>
+                        <div class="close" rel="msg-del" arg="@msg.ID">Удалить</div>
+                    </div>
+                </li>
+            }
+            @if (!outcome.Any())
+            {
+                <li class="user-list-item noms">
+                    <b>У вас нет отправленных сообщений</b>
+                </li>
+            }
+
+        </ul>
+    </div>
+</div>
+
+@section sidebar{
+    @Html.Action("LeftMenu")
+}

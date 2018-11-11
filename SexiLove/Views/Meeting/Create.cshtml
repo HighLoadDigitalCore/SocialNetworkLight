@@ -1,0 +1,172 @@
+﻿@{
+    var currentUser = ((BaseController)ViewContext.Controller).CurrentUser ?? new User() { ID = 0 };
+    ViewBag.SidebarCSS = currentUser.ID > 0 ? "sidebar-reg" : "";
+
+    ViewBag.Title = "CityLove - Создание встречи";
+    Layout = "~/Views/Shared/InnerPage.cshtml";
+    
+    ViewBag.ContentWrapCSS = "content-wrap-reg";
+    var places = (List<Place>)ViewBag.Places;
+
+    var friends = new xDBDataContext().Friends.Where(x => x.IsRead && (x.FromUserID == currentUser.ID || x.ToUserID == currentUser.ID) && x.Status == 1).ToList().Select(
+        x =>
+            new
+            {
+                Value = x,
+                Name = (x.ToUserID == currentUser.ID ? x.FromUser.NameAndSurname : x.ToUser.NameAndSurname)
+            })
+        .OrderBy(x => x.Name)
+        .Select(x => x.Value)
+        .ToList();
+}
+@using SexiLove.Extensions
+@using SexiLove.Models
+@model SexiLove.Models.Meeting
+<header class="content-header row">
+    <ol class="list-unstyled breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Каталог встреч</a></li>
+        <li class="breadcrumb-item"><a href="#">Создать встречу</a></li>
+    </ol>
+    @Html.Action("Account", "Cabinet")
+</header>
+<script type="text/javascript">
+    function split(val) {
+        return val.split(/,\s*/);
+    }
+    function extractLast(term) {
+        return split(term).pop();
+    }
+
+    function refreshList() {
+        var list = '';
+        $('.fr').each(function() {
+            list += $(this).attr('arg') + ';';
+        });
+        $('#FriendList').val(list);
+    }
+
+    function deleteFriend(obj) {
+        $('.fr[arg="' + $(obj).attr('arg') + '"]').remove();
+        refreshList();
+        return false;
+    }
+    $().ready(function () {
+        $('#Friends').change(function () {
+            if ($('#Friends').val().length) {
+                var exist = $('.meeting-friends .fr[arg="' + $('#Friends').val() + '"]');
+                if (!exist.length) {
+                    $('.meeting-friends').append('<div class="fr" arg="' + $('#Friends').val() + '"><span>' + $('#Friends option:selected').text() + '</span><a title="Удалить" href="#" arg="' + $('#Friends').val() + '" onclick="deleteFriend(this);return false;">X</a></div>');
+                    refreshList();
+                }
+            }
+        });
+        $("#FriendAuto").autocomplete({
+            source: function (request, response) {
+                $.getJSON("/Meeting/FriendsList", {
+                    term: extractLast(request.term)
+                }, response);
+            },
+            search: function () {
+                // custom minLength
+                var term = extractLast(this.value);
+                if (term.length < 2) {
+                    return false;
+                }
+            },
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function (event, ui) {
+                //alert(ui.item.value);
+
+                var exist = $('.meeting-friends .fr[arg="' + ui.item.value + '"]');
+                if (!exist.length) {
+                    $('.meeting-friends').append('<div class="fr" arg="' + ui.item.value + '"><span>' + ui.item.label + '</span><a href="#" title="Удалить" arg="' + ui.item.value + '" onclick="deleteFriend(this);return false;">X</a></div>');
+                    refreshList();
+                }
+
+                return false;
+            }
+        });
+    });
+</script>
+@using (Html.BeginForm("Create", "Meeting", FormMethod.Post, new { @class = "row" }))
+{
+
+    <div class="content-column-1">
+        <h3>Со мной пойдет кто-то еще</h3>
+
+        <select id="Friends">
+            <option value="">Выберите друзей</option>
+            @foreach (var friend in friends)
+            {
+                <option value="@friend.GetUserID(currentUser)">@friend.GetFriendName(currentUser)</option>
+            }
+        </select>
+        <input type="text" id="FriendAuto" placeholder="Поиск по нику">
+        <input type="hidden" id="FriendList" name="FriendList" />
+        <div class="meeting-friends"></div>
+        @*
+        <h3>Это платная встреча?</h3>
+        <input type="text" placeholder="Укажите стоимость" value="@Model.Cost" name="Cost">
+*@
+        <input type="hidden"  value="" name="Cost">
+        <h3>Когда</h3>
+        <input class="@(Model.IsPost && !Model.Date.HasValue ? "err" : "" )" type="text" arg="date" name="Date" value="@(Model.Date.HasValue ? Model.Date.Value.ToString("dd.MM.yyyy") : "")" placeholder="Выберите дату">
+        <h3>Укажите время</h3>
+        @*<input class="@(Model.IsPost && Model.TimeStr.IsNullOrEmpty() ? "err" : "")" type="text" arg="time" name="TimeStr" value="@(Model.Time.HasValue ? Model.Time.Value.ToString() : "" )" placeholder="Выберите время">*@
+        <input  type="text" arg="time" name="TimeStr" value="@(Model.Time.HasValue ? Model.Time.Value.ToString() : "" )" placeholder="Выберите время">
+        <h3>Название заведения</h3>
+        <select name="PlaceID" class="@(Model.IsPost && Model.PlaceID == 0 ? "err" : "" )">
+            <option value="0" @(Model.PlaceID == 0 ? "selected" : "")></option>
+            @foreach (var place in places)
+            {
+                <option value="@place.ID" @(Model.PlaceID == place.ID ? "selected" : "")>@place.Name</option>
+            }
+        </select>
+        @*<input type="text" placeholder="Введите место проведения встречи">*@
+        <h3>Цель встречи</h3>
+        <select id="search-target" name="Type" class="@(Model.Type.IsNullOrEmpty() ? "" : "")">
+            <option @(Model.Type == "Для брака, семьи" ? "selected" : "") value="Для брака, семьи">Для брака, семьи</option>
+            <option @(Model.Type == "Для дружбы" ? "selected" : "") value="Для дружбы">Для дружбы</option>
+            <option @(Model.Type == "Для любви, романтических отношений" ? "selected" : "") value="Для любви, романтических отношений">Для любви, романтических отношений</option>
+            <option @(Model.Type == "Для секса" ? "selected" : "") value="Для секса">Для секса</option>
+            <option @(Model.Type == "Для совместного занятия хобби" ? "selected" : "") value="Для совместного занятия хобби">Для совместного занятия хобби</option>
+            <option @(Model.Type == "Для совместного проживания" ? "selected" : "") value="Для совместного проживания">Для совместного проживания</option>
+        </select>
+
+        @*<input type="text" placeholder="Другое">*@
+        <h3>Кого пригласить</h3>
+        <select id="search-object" name="Sex">
+            <option value="True" @(Model.TargetSex ? "selected" : "")>Парня</option>
+            <option value="False" @(!Model.TargetSex ? "selected" : "")>Девушку</option>
+        </select>
+        <div class="row">
+            <label for="search-age-min" class="inline">В возрасте</label>
+            <div class="select-range small">
+                <div class="select-range-min">
+                    <input type="text" value="@Model.MinAge" name="MinAge" />
+                </div>
+                <div class="select-range-max">
+                    <input type="text" value="@Model.MaxAge" name="MaxAge" />
+                </div>
+            </div>
+        </div>
+        <h3>Кто может видеть эту встречу?</h3>
+        <select name="Access">
+            <option value="0" @(Model.HasAccess == 0 ? "selected" : "")>Все</option>
+            <option value="1" @(Model.HasAccess == 1 ? "selected" : "")>Друзья</option>
+            <option value="2" @(Model.HasAccess == 2 ? "selected" : "")>Друзья друзей</option>
+            <option value="-1" @(Model.HasAccess == -1 ? "selected" : "")>Никто</option>
+        </select>
+        <h3>Комментарий</h3>
+        <textarea name="Comment">@Model.Comment</textarea>
+        <button type="submit" class="btn btn-green btn-upper btn-small pull-right">Создать встречу</button>
+    </div>
+}
+
+@section sidebar
+{
+    @Html.Action("LeftMenu", "Cabinet")
+}

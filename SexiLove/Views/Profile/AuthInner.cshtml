@@ -1,0 +1,35 @@
+﻿@using SexiLove.Extensions
+@model SexiLove.Models.LoginModel
+<div id="AuthInnerForm">
+    <div class="sidebar-block">
+        <header class="header-title2"><span class="icon icon-account"></span>Уже есть аккаунт</header>
+        @using (Ajax.BeginForm("AuthInner", "Profile", new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "AuthInnerForm" }))
+        {
+
+            <label for="Email">Логин</label>
+            <input type="text" value="@Model.Email" name="Email">
+            <label for="user-password">Пароль</label>
+            <input type="password" value="@Model.Password" name="Password">
+            <div class="sidebar-block-reg"><a href="@Url.Action("Index", "Home")">Забыли пароль?</a></div>
+            <button class="btn btn-green btn-upper btn-small" type="submit">Войти</button>
+        }
+        @if (Model.Message.IsFilled())
+        {
+            <div class="row">
+                <ul class="list-unstyled">
+                    <li class="error">
+                        <br/>
+                        @Model.Message
+                    </li>
+                </ul>
+            </div>
+        }
+    </div>
+   
+    @if (Model.RedirectURL.IsFilled())
+    {
+        <script type="text/javascript">
+            document.location.href = '@(Model.RedirectURL)';
+        </script>
+    }
+</div>

@@ -1,0 +1,98 @@
+﻿@using System.Web.UI.WebControls
+@using SexiLove.Models
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <title>@ViewBag.Title</title>
+    <link href="/components/normalize/normalize.css" rel="stylesheet">
+    <link href="/components/magnific/magnific-popup.css" rel="stylesheet">
+    <link href="/css/pickmeup.css" rel="stylesheet">
+    <link href="/css/jquery.ui.timepicker.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <link href="/css/ie.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script><script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--[if gte IE 9]><!-->
+    <script src="/components/jquery/jquery.min.js"></script><![endif]-->
+    <script src="/components/jquery/jquery-ui.min.js"></script>
+    <script src="/components/jquery/jquery-migrate.min.js"></script>
+    <script src="/components/slick/slick.min.js"></script>
+    <script src="/components/formstyler/jquery.formstyler.min.js"></script>
+    <script src="/components/scroll/perfect-scrollbar.with-mousewheel.min.js"></script>
+    <script src="/components/password/hideShowPassword.min.js"></script>
+    <script src="/components/magnific/jquery.magnific-popup.min.js"></script>
+    <script src="/components/load-image/load-image.min.js"></script>
+    <script src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="/Scripts/jquery.cookie.js"></script>
+    <script src="/js/jquery.pickmeup.js"></script>
+    <script src="/js/jquery.ui.timepicker.js"></script>
+    <script src="/js/main.js"></script>
+</head>
+</html>
+<body class="noJS bg-light">
+    <header class="header row">
+        <div class="container">
+            <a href="/" class="logo"><img src="/img/logo.png"></a>
+            <div class="header-nav">
+                <nav class="header-nav-additional row">
+                    <ul class="list-unstyled header-nav-additional-list">
+                        <li class="header-nav-additional-item"><a href="@TextPage.GetPageURL("about")">О проекте</a></li>
+                        <li class="header-nav-additional-item"><a href="@TextPage.GetPageURL("ad")">Реклама</a></li>
+                        <li class="header-nav-additional-item"><a href="@TextPage.GetPageURL("support")">Служба поддержки</a></li>
+                        <li class="header-nav-additional-item"><a href="@TextPage.GetPageURL("help")">Помощь</a></li>
+                    </ul>
+                </nav>
+                <nav class="header-nav-main row">
+                    <ul class="list-unstyled header-nav-main-list">
+                        <li class="header-nav-main-item icon-meeting"><a href="@Url.Action("Index", "Meeting")">Встречи</a></li>
+                        <li class="header-nav-main-item icon-dating"><a href="@Url.Action("Index", "Dating")">Знакомства</a></li>
+                        <li class="header-nav-main-item icon-places"><a href="@Url.Action("Places", "Places")">Места</a></li>
+                    </ul>
+                </nav>
+                <div class="city">
+                    <div class="city-title">Ваш город:</div>
+                    <div class="city-selected">
+                        <select name="city">
+                            @Html.Action("TownList", "Home")
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="wrapper row">
+        <div class="container">
+            <div class="content-wrap @ViewBag.ContentWrapCSS">
+                <article class="content @ViewBag.ContentCSS">
+                        @RenderBody()
+                </article>
+                <section class="sidebar @ViewBag.SidebarCSS">
+                    @RenderSection("sidebar", false)
+                </section>
+            </div>
+        </div>
+    </section>
+    <!--Begin FOOTER-->
+    <footer class="footer footer-inner row">
+        <div class="container">
+            <a href="/" class="logo"><img src="/img/logo-2.png"></a>
+            <p class="copyright">&copy; 2010 - @DateTime.Now.Year City Love</p>
+            <nav class="footer-nav">
+                <ul class="list-unstyled">
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("about")">О проекте</a></li>
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("ad")">Реклама</a></li>
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("support")">Служба поддержки</a></li>
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("help")">Помощь</a></li>
+                </ul>
+            </nav>
+            <div class="social"><a href="#" class="social-btn social-btn-vk"></a><a href="#" class="social-btn social-btn-f"></a></div>
+        </div>
+    </footer>
+    @RenderSection("modal", false)
+</body>

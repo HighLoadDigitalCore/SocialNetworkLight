@@ -1,0 +1,19 @@
+﻿@model IList<SexiLove.Models.Visit>
+@if (Model.Any())
+{
+    <ul class="list-unstyled user-list">
+        @foreach (var visit in Model)
+        {
+            <li class="user-list-item ">
+                <div class="user-list-item-img"><img src="@visit.Visitor.Avatar?w=80&h=80&mode=crop"></div>
+                <div class="user-list-item-content">
+                    <h4 class="user-list-item-content-name"><a href="@Url.Action("Index", "Cabinet", new {ID = visit.VisitorID})">@visit.Visitor.NameAndSurname</a></h4>
+                    <div class="user-list-item-content-age">@visit.Visitor.Age</div>
+                    <div class="user-list-item-content-city">просматривал(а) страницу @visit.VisitDate.ToString("d MMMMM в HH:mm")</div>
+                </div>
+
+            </li>
+        }
+
+    </ul>
+}

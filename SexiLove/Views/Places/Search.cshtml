@@ -1,0 +1,98 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@model PlacesSearch
+<div id="DateingList">
+    <div class="search">
+        @using (Ajax.BeginForm("Search", "Places", new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "DateingList", OnComplete = "initUIAgain($('#DateingList'));" }))
+        {
+
+            <div class="row">
+                <div class="search-block search-block-1">
+                    <label for="search-object">Тип заведения</label>
+                    <select id="search-object" name="Type">
+                        <option @(Model.Type == "Кафе" ? "selected" : "") value="Кафе">Кафе</option>
+                        <option @(Model.Type == "Ресторан" ? "selected" : "") value="Ресторан">Ресторан</option>
+                        <option @(Model.Type == "Каток" ? "selected" : "") value="Каток">Каток</option>
+                    </select>
+                </div>
+                <div class="search-block search-block-2">
+                    <label for="search-target">Город</label>
+                    <select name="TownID" id="search-target">
+                        @Html.Action("TownList", "Home", new { townID = Model.TownID })
+                    </select>
+                </div>
+                <div class="search-block search-block-3">
+                    <label for="search-age-min">Чек</label>
+                    <div class="input-range">
+                        <div class="input-range-min">
+                            <input type="text" name="MinPay" value="@Model.MinPay" placeholder="от" id="search-age-min">
+                        </div>
+                        <div class="input-range-max">
+                            <input type="text" name="MaxPay" value="@Model.MaxPay" placeholder="до" id="search-age-max">
+                        </div>
+                    </div>
+                </div>
+                <div class="search-block search-block-1">
+                    <label for="search-aura">Атмосфера</label>
+                    <select name="Atmos" id="search-aura">
+                        <option value="" @(string.IsNullOrEmpty(Model.Atmos) ? "selected" : "")></option>
+                        @foreach (var atm in PlacesSearch.AtmoList)
+                        {
+                            <option @(Model.Atmos == atm ? "selected" : "") value="@atm">@atm</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="search-block search-block-1">
+                    <button type="submit" class="btn btn-blue btn-upper btn-xsmall">Поиск</button>
+                </div>
+            </div>
+            <div class="place-order">
+                <input type="hidden" name="Order" value="1"/>
+                <a arg="1" onclick="return setPlacesOrder(1)" class="content-link @(Model.Order == 1 ? "active":"")" href="#">По алфавиту</a>
+                <a arg="1" onclick="return setPlacesOrder(2)" class="content-link @(Model.Order == 2 ? "active":"")" href="#">По рейтингу</a>
+                
+            </div>
+        }
+    </div>
+    <ul class="list-unstyled place-list">
+        @foreach (var place in Model.Result)
+        {
+            <li class="place-list-item">
+                <div class="row">
+                    <div class="place-list-item-img"><img width="120" height="120" src="@(place.PlaceImages.Any() ? place.PlaceImages.First().Path+"?w=120&h=120&mode=crop":"" )"></div>
+                    <div class="place-list-item-content">
+                        <h4 class="place-list-item-content-title"><a href="@Url.Action("View", "Places", new{ID=place.ID})"><img src="@place.Logo?w32&h=32&mode=crop">@place.Name</a></h4>
+                        <div><span class="icon icon-place"></span><a href="@Url.Action("View", "Places", new{ID=place.ID})" data-title="@place.Name" class="address address-small">@place.Adress</a></div>
+                        <dl>
+                            @if (place.Metro.IsFilled())
+                            {
+                                <dt>Метро: </dt>
+                                <dd>@place.Metro</dd>
+                            }
+                            <dt>Средний чек:</dt>
+                            <dd>@((place.MinPay + place.MaxPay) / 2) руб.</dd>
+                        </dl>
+                    </div>
+                    <div class="place-list-item-rating">
+                        <div class="rating">Рейтинг: <span class="rating-value color-red">@place.CommonRating</span></div>
+                    </div>
+                </div>
+                @if (place.PlaceImages.Count > 1)
+                {
+                    <div class="place-list-item-images row">
+                        @foreach (var img in place.PlaceImages.Skip(1))
+                        {
+                            <a href="@Url.Action("AllPhoto", new{ID = place.ID})">
+                                <img src="@img.Path?w=40&h=40&mode=crop">
+                            </a>
+                        }
+
+                    </div>
+                }
+            </li>
+
+        }
+    </ul>
+</div>

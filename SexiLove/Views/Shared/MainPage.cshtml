@@ -1,0 +1,311 @@
+﻿@using SexiLove.Extensions
+@using SexiLove.Models
+@{
+    var db = new xDBDataContext();
+    var currentUser = db.Users.FirstOrDefault(x => x.ID == WebSecurity.CurrentUserId);
+    if (currentUser != null)
+    {
+        currentUser.InitAddFieldsFromMain();
+    }
+    var users = db.Users.Where(x => x.webpages_UsersInRoles.Any(z => z.webpages_Role.RoleName == "Client")).OrderByDescending(x => x.IsVip).ThenByDescending(x => x.IsUp).ThenByDescending(x => x.webpages_Membership.CreateDate).Take(50);
+    var meetings = db.Meetings.Where(x => x.Date.HasValue && x.Date.Value.Date >= DateTime.Now.Date).OrderByDescending(x => x.User.IsVip).ThenByDescending(x => x.User.IsUp).ThenByDescending(x => x.Date).Take(20);
+
+    var newUsers = db.Users.Where(x => x.webpages_UsersInRoles.Any(z => z.webpages_Role.RoleName == "Client")).OrderByDescending(x => x.webpages_Membership.CreateDate).Take(50);
+    var places = db.Places.Where(x=> x.Approved).OrderByDescending(x=> x.IsVip).ThenByDescending(x=> x.PlaceRatings.Where(z=> z.Name == "").Sum(z=> z.Rating)).Take(10);
+}
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <title>@ViewBag.Title</title>
+    <link href="/components/normalize/normalize.css" rel="stylesheet">
+    <link href="/components/magnific/magnific-popup.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <link href="/css/ie.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script><script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--[if gte IE 9]><!-->
+    <script src="/components/jquery/jquery.min.js"></script><![endif]-->
+    <script src="/components/jquery/jquery-ui.min.js"></script>
+    <script src="/components/jquery/jquery-migrate.min.js"></script>
+    <script src="/components/slick/slick.min.js"></script>
+    <script src="/components/formstyler/jquery.formstyler.min.js"></script>
+    <script src="/components/scroll/perfect-scrollbar.with-mousewheel.min.js"></script>
+    <script src="/components/password/hideShowPassword.min.js"></script>
+    <script src="/components/magnific/jquery.magnific-popup.min.js"></script>
+    <script src="/components/load-image/load-image.min.js"></script>
+    <script src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="/js/main.js"></script>
+
+</head>
+</html>
+<body class="noJS bg-dark">
+    <!--Begin HEADER-->
+    <header class="header main row">
+        <nav class="header-nav row">
+            <div class="container">
+                <ul class="list-unstyled header-nav-list">
+                    <li class="header-nav-item"><a href="@Url.Action("Index", "Meeting")">Встречи</a></li>
+                    <li class="header-nav-item"><a href="@Url.Action("Index", "Dating")">Знакомства</a></li>
+                    <li class="header-nav-item"><a href="@Url.Action("Index", "Events")">Мероприятия</a></li>
+                    <li class="header-nav-item"><a href="@Url.Action("Places", "Places")">Места</a></li>
+                    <li class="header-nav-item"><a href="@TextPage.GetPageURL("about")">О проекте</a></li>
+                    <li class="header-nav-item"><a href="@TextPage.GetPageURL("ad")">Реклама</a></li>
+                    <li class="header-nav-item"><a href="@TextPage.GetPageURL("help")">Помощь</a></li>
+                </ul>
+                <div class="city">
+                    <div class="city-title">Ваш город:</div>
+                    <div class="city-selected">
+                        <select name="city">
+                            @Html.Action("TownList", "Home")
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <section class="header-content row">
+            <div class="container">
+                <div class="header-content-login">
+                    @RenderBody()
+                    <a href="#" id="login" class="btn btn-pink">Войти</a><a href="@Url.Action("Register", "Profile")" class="reg-link">Регистрация</a>
+                    <script src="//ulogin.ru/js/ulogin.js"></script>
+                    <div class="social">Войти через: <div id="uLogin1" data-ulogin="display=panel;fields=first_name,email,nickname,photo,photo_big,sex,bdate;providers=vkontakte,odnoklassniki,facebook,google,twitter,mailru;hidden=;redirect_uri=http%3A%2F%2F@(Request.Url.Host)%2FProfile%2FSocials"></div></div>
+                </div>
+                <div class="search search-main">
+                    @using (Html.BeginForm("People", "Home", FormMethod.Post))
+                    {
+                        <div class="search-title">Поиск</div>
+                        <select name="city">
+                            @Html.Action("TownList", "Home")
+                        </select>
+                        <select name="sex">
+                            <option selected value="0">Девушка</option>
+                            <option value="1">Парень</option>
+                        </select>
+                        <select name="years">
+                            <option selected value="18-25">18-25 лет</option>
+                            <option value="25-32">25-32 лет</option>
+                            <option value="32-40">32-40 лет</option>
+                            <option value="40-60">40-60 лет</option>
+                        </select>
+                        <button type="submit" class="btn btn-green">Найти</button>
+
+                    }
+                </div>
+            </div>
+        </section>
+    </header>
+    <!--End HEADER-->
+    <!--Begin USERS-->
+    <section class="users row">
+        <div class="container">
+            <header class="header-title arrow row">
+                <h2>Узнай <a href="@TextPage.GetPageURL("dating")">как попасть сюда!</a></h2>
+            </header>
+            <div class="carousel row">
+                @foreach (var user in users)
+                {
+                    user.InitAddFieldsFromMain();
+                    <div class="users-item slide">
+                        <a href="@Url.Action("Index", "Cabinet", new {ID = user.ID})">
+                            <div class="users-item-img"><img width="90" height="90" src="@user.Avatar?w=90&h=90&mode=crop"></div>
+                            <div class="users-item-title">
+                                @user.UserName<br>
+                                @user.Age
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+    <!--End USERS-->
+    <!--Begin SEARCH-->
+    <div class="search search-main row">
+        <div class="container">
+            @using (Html.BeginForm("People", "Home", FormMethod.Post))
+            {
+                <select name="city" class="pull-left">
+                    @Html.Action("TownList", "Home")
+                </select>
+                <select name="sex" class="pull-left">
+                    <option selected value="0">Девушка</option>
+                    <option value="1">Парень</option>
+                </select>
+                <select name="years" class="pull-left">
+                    <option selected value="18-25">18-25 лет</option>
+                    <option value="25-32">25-32 лет</option>
+                    <option value="32-40">32-40 лет</option>
+                    <option value="40-60">40-60 лет</option>
+                </select>
+                <button type="submit" class="btn btn-green btn-upper">Найти</button>
+            }
+        </div>
+    </div>
+    <!--End SEARCH-->
+    <!--Begin MEETING-->
+    @if (meetings.Any())
+    {
+        <section class="info info-meeting row">
+            <div class="container">
+                <header class="header-title row">
+                    <h2>Встречи <a href="@Url.Action("Index", "Meeting")">Посмотреть все встречи</a></h2>
+                    @if (currentUser != null)
+                    {
+                        <a href="@Url.Action("Create", "Meeting")" class="btn btn-pink btn-upper">Создать встречу</a>
+                    }
+                </header>
+                <div class="carousel row">
+                    @foreach (var meeting in meetings)
+                    {
+                        <div class="slide">
+                            <article class="info-block">
+                                <header class="info-block-header">
+                                    <div class="info-block-place">
+                                        <img src="@((meeting.Place.PlaceImages.FirstOrDefault() ?? new PlaceImage()).Path)?w=260&h=110&mode=crop">
+                                        <div>@(meeting.Date.Value.Date == DateTime.Now.Date ? "Сегодня" : meeting.Date.Value.ToString("d MMMMM"))</div>
+                                    </div>
+                                    <div class="info-block-owner">
+                                        <img src="@meeting.User.Avatar?w=110&h=110&mode=crop"><a href="@Url.Action("Index", "Cabinet", new{ID = meeting.User.ID})">
+                                            @meeting.User.UserName<br>
+                                            @meeting.User.Age
+                                        </a>
+                                    </div>
+                                </header>
+                                <h4><a href="@Url.Action("View", "Places", new{ID = meeting.PlaceID})">@meeting.Place.Type &laquo;@meeting.Place.Name&raquo;</a><br><a href="@Url.Action("Index", "Cabinet", new{ID = meeting.User.ID})">@meeting.Comment</a></h4>
+                                <p>
+                                    @meeting.Place.Description.ClearHTML()
+                                </p>
+                                <footer class="info-block-footer">@meeting.Place.Adress</footer>
+                            </article>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </section>
+
+        <!--End MEETING-->
+        <!--Begin SEARCH-->
+        <div class="search search-main row">
+            <div class="container">
+                @using (Html.BeginForm("Meeting", "Home", FormMethod.Post))
+                {
+                    <select name="city" class="pull-left">
+                        @Html.Action("TownList", "Home")
+                    </select>
+                    <select name="sex" class="pull-left">
+                        <option selected value="0">Девушка</option>
+                        <option value="1">Парень</option>
+                    </select>
+                    <select name="years" class="pull-left">
+                        <option selected value="18-25">18-25 лет</option>
+                        <option value="25-32">25-32 лет</option>
+                        <option value="32-40">32-40 лет</option>
+                        <option value="40-60">40-60 лет</option>
+                    </select>
+                    <button type="submit" class="btn btn-green btn-upper">Найти</button>
+                }
+
+            </div>
+        </div>
+    }
+    <!--End SEARCH-->
+    <!--Begin USERS-->
+    <section class="users row">
+        <div class="container">
+            <header class="header-title arrow row">
+                <div class="userToggleHead" arg="1"></div>
+                <div class="userToggleHead" arg="2"></div>
+                <h2>Новые пользователи <a href="@Url.Action("Index", "Dating")">все пользователи</a></h2>
+            </header>
+            <div class="carousel row">
+                @foreach (var user in newUsers)
+                {
+                    user.InitAddFieldsFromMain();
+                    <div class="users-item slide">
+                        <a href="@Url.Action("Index", "Cabinet", new {ID = user.ID})">
+                            <div class="users-item-img"><img width="90" height="90" src="@user.Avatar?w=90&h=90&mode=crop"></div>
+                            <div class="users-item-title">
+                                @user.UserName<br>
+                                @user.Age
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+    <!--End USERS-->
+    <!--Begin SEARCH-->
+
+    <div class="search search-main row">
+        <div class="container">
+            @using (Html.BeginForm("People", "Home", FormMethod.Post))
+            {
+                <select name="city" class="pull-left">
+                    @Html.Action("TownList", "Home")
+                </select>
+                <select name="sex" class="pull-left">
+                    <option selected value="0">Девушка</option>
+                    <option value="1">Парень</option>
+                </select>
+                <select name="years" class="pull-left">
+                    <option selected value="18-25">18-25 лет</option>
+                    <option value="25-32">25-32 лет</option>
+                    <option value="32-40">32-40 лет</option>
+                    <option value="40-60">40-60 лет</option>
+                </select>
+                <button type="submit" class="btn btn-green btn-upper">Найти</button>
+            }
+        </div>
+    </div>
+    <!--End SEARCH-->
+    <!--Begin PLACE-->
+    <section class="info row">
+        <div class="container">
+            <header class="header-title row">
+                <h2>Места <a href="@Url.Action("Places", "Places")">все места</a></h2>
+            </header>
+            <div class="carousel row">
+                @foreach (var place in places)
+                {
+                    <div class="slide">
+                        <article class="info-block">
+                            <header class="info-block-header"><img src="@((place.PlaceImages.FirstOrDefault()?? new PlaceImage()).Path)?w=380&h=110&mode=crop"></header>
+                            <h4><a href="@Url.Action("View", "Places", new{ID = place.ID} )">@place.Type &laquo;@place.Name&raquo;</a></h4>
+                            <p>
+                                @Html.Raw(place.Description.ClearHTML())
+                            </p>
+                            <footer class="info-block-footer">@place.Adress</footer>
+                        </article>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </section>
+    <!--End PLACE-->
+    <!--Begin FOOTER-->
+    <footer class="footer row">
+        <div class="container">
+            <p class="copyright">&copy; 2010 - @DateTime.Now.Year City Love</p>
+            <nav class="footer-nav">
+                <ul class="list-unstyled">
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("about")">О проекте</a></li>
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("ad")">Реклама</a></li>
+                    <li class="footer-nav-item"><a href="@TextPage.GetPageURL("help")">Помощь</a></li>
+                </ul>
+            </nav>
+            <div class="social"><a href="#" class="social-btn social-btn-vk"></a><a href="#" class="social-btn social-btn-f"></a></div>
+        </div>
+    </footer>
+
+    @Html.Action("Login", "Profile")
+
+</body>

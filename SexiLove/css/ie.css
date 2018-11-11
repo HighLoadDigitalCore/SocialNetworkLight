@@ -1,0 +1,24 @@
+/**
+ * Project: CityLove (v1.0.0)
+ * Author: Romanov Artem
+ * Contact: hardxiii@gmail.com
+ * Date: Mon Jun 30 2014
+ */
+
+.search .pull-left {
+  margin-right: 15px;
+}
+.search-block {
+  margin-right: 10px;
+}
+.place-images-more img,
+.user-images-more img {
+  margin-right: 5px;
+}
+.photos-item {
+  margin: 0 5px 5px 0;
+}
+.user-buttons .btn {
+  max-width: 100%;
+  margin: 0 0 10px 0;
+}
